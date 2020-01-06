@@ -8,8 +8,7 @@ import java.lang.Integer.max
 class Table private constructor(
     private val cells: Map<Pos, Renderable>,
     private val horizontalSeparator: Char?,
-    private val verticalSeparator: Char?,
-    private val intersectionRules: Iterable<IntersectionRule>
+    private val verticalSeparator: Char?
 ) : Renderable {
     val rows: Int
     val columns: Int
@@ -21,9 +20,9 @@ class Table private constructor(
         }
     }
 
-    override fun render(): DisplayElement {
+    override fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement {
         // Render all cells
-        val renderedCells = cells.map { it.key to it.value.render() }.toMap()
+        val renderedCells = cells.map { it.key to it.value.render(intersectionRules) }.toMap()
         // Calculate column widths and row heights
         val columnWidths = Array(columns) { 0 }
         val rowHeights = Array(rows) { 0 }
@@ -57,7 +56,7 @@ class Table private constructor(
                 Separator.horizontalSeparator(this, width).withOffset(0, rowOffsets[it] - 1)
             })
         }
-        return Panel(children, intersectionRules).render()
+        return Panel(children).render(intersectionRules)
     }
 
 
@@ -65,7 +64,6 @@ class Table private constructor(
         private val cells = mutableMapOf<Pos, Renderable>()
         private var horizontalSeparator: Char? = null
         private var verticalSeparator: Char? = null
-        private val intersectionRules = mutableListOf<IntersectionRule>()
 
         private var topLeft: Pos = Pos.ORIGIN
         private var bottomRight: Pos = Pos.ORIGIN
@@ -101,70 +99,26 @@ class Table private constructor(
             return this
         }
 
-        fun withHorizontalSeparatorAscii(): Builder =
-            withHorizontalSeparator(Separator.asciiHorizontal).withAsciiIntersectRules()
-
-        fun withHorizontalSeparatorUnicodeSingle(): Builder =
-            withHorizontalSeparator(Separator.unicodeHorizontalSingle).withUnicodeIntersectRules()
-
-        fun withHorizontalSeparatorUnicodeDouble(): Builder =
-            withHorizontalSeparator(Separator.unicodeHorizontalDouble).withUnicodeIntersectRules()
-
         fun withVerticalSeparator(ch: Char?): Builder {
             verticalSeparator = ch
             return this
         }
 
-        fun withVerticalSeparatorAscii(): Builder =
-            withVerticalSeparator(Separator.asciiVertical).withAsciiIntersectRules()
+        fun withSeparatorsAscii() =
+            withVerticalSeparator(Separator.asciiVertical)
+                .withHorizontalSeparator(Separator.asciiHorizontal)
 
-        fun withVerticalSeparatorUnicodeSingle(): Builder =
-            withVerticalSeparator(Separator.unicodeVerticalSingle).withUnicodeIntersectRules()
 
-        fun withVerticalSeparatorUnicodeDouble(): Builder =
-            withVerticalSeparator(Separator.unicodeVerticalDouble).withUnicodeIntersectRules()
+        fun withSeparatorsUnicodeSingle() =
+            withVerticalSeparator(Separator.unicodeVerticalSingle)
+                .withHorizontalSeparator(Separator.unicodeHorizontalSingle)
 
-        fun withIntersectRule(
-            intersection: Char,
-            left: Char? = null,
-            right: Char? = null,
-            above: Char? = null,
-            below: Char? = null
-        ): Builder {
-            if (listOf(left, right, above, below).count { it != null } < 1) throw Exception("Not enough sides")
-            intersectionRules.add(IntersectionRuleImpl(intersection, left, right, above, below))
-            return this
-        }
+        fun withSeparatorsUnicodeDouble() =
+            withVerticalSeparator(Separator.unicodeVerticalDouble)
+                .withHorizontalSeparator(Separator.unicodeHorizontalDouble)
 
-        fun withAsciiIntersectRules(): Builder {
-            intersectionRules.add(Separator.asciiRules)
-            return this
-        }
-
-        fun withUnicodeIntersectRules(): Builder {
-            intersectionRules.add(Separator.unicodeRules)
-            return this
-        }
-
-        fun withSeparatorsAscii(): Builder {
-            return withVerticalSeparatorAscii()
-                .withHorizontalSeparatorAscii()
-                .withAsciiIntersectRules()
-        }
-
-        fun withSeparatorsUnicodeSingle(): Builder {
-            return withVerticalSeparatorUnicodeSingle()
-                .withHorizontalSeparatorUnicodeSingle()
-                .withUnicodeIntersectRules()
-        }
-
-        fun withSeparatorsUnicodeDouble(): Builder {
-            return withVerticalSeparatorUnicodeDouble()
-                .withHorizontalSeparatorUnicodeDouble()
-                .withUnicodeIntersectRules()
-        }
 
         fun build(): Table =
-            Table(normaliseCells(cells), horizontalSeparator, verticalSeparator, intersectionRules.distinct())
+            Table(normaliseCells(cells), horizontalSeparator, verticalSeparator)
     }
 }

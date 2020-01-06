@@ -3,13 +3,11 @@ package atrico.kotlib.konsole
 /**
  * Panel containing multiple [Renderable] objects
  */
-class Panel private constructor(
-    private val children: Iterable<RenderableWithOffset>, private val intersectionRules: Iterable<IntersectionRule>
-) : Renderable {
-    override fun render(): DisplayElement {
+class Panel(    private val children: Iterable<RenderableWithOffset>) : Renderable {
+    override fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement {
         val canvas = Canvas.blank
         for (child in children) {
-            child.renderable.render().forEachPopulatedCell { pos, cell -> canvas.setCell(pos + child.offset, cell) }
+            child.renderable.render(intersectionRules).forEachPopulatedCell { pos, cell -> canvas.setCell(pos + child.offset, cell) }
         }
         // Update intersections
         val allSeparators = canvas.getAllCells().filter { it.value.hasFlag(CellFlags.SEPARATOR) }
@@ -23,7 +21,7 @@ class Panel private constructor(
                 .firstOrNull()
                 ?.apply { canvas.setCell(cell.key, Cell(this, CellFlags.SEPARATOR)) }
         }
-        return canvas.render()
+        return canvas.render(intersectionRules)
     }
 
     companion object {
@@ -31,12 +29,8 @@ class Panel private constructor(
             invoke(listOf(firstChild) + children.asIterable())
 
         @JvmName("invokeRenderable") // Avoid signature clash
-        operator fun invoke(children: Iterable<Renderable>) =
-            invoke(children.map { RenderableWithOffset(it) })
+        operator fun invoke(children: Iterable<Renderable>) = Panel(children.map { it.withOffset()})
 
-        operator fun invoke(vararg children: RenderableWithOffset) = invoke(children.asIterable())
-        operator fun invoke(children: Iterable<RenderableWithOffset>) = invoke(children, emptyList())
-        operator fun invoke(children: Iterable<RenderableWithOffset>, intersectionRules: Iterable<IntersectionRule>) =
-            Panel(children, intersectionRules)
+        operator fun invoke(vararg children: RenderableWithOffset) = Panel(children.asIterable())
     }
 }

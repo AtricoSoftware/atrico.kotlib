@@ -22,7 +22,7 @@ class SudokuExample(
         }.toMap()
     }
 
-    override fun render(): DisplayElement {
+    override fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement {
         val outerTable = createTable(major)
         Pos.allPos(3, 3).forEach { itBox ->
             val innerTable = createTable(minor)
@@ -32,10 +32,10 @@ class SudokuExample(
             }
             outerTable.setCell(itBox, innerTable.build())
         }
-        return createBorder(outerTable.build(), border).build().render()
+        return createBorder(outerTable.build(), border).build().render(intersectionRules)
 
     }
- }
+}
 
 fun main() {
     val sudoku1 = SudokuExample(SeparatorType.DOUBLE, SeparatorType.SINGLE, SeparatorType.NONE)

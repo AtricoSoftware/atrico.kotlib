@@ -7,7 +7,11 @@ interface Renderable {
     /**
      * Render this object
      */
-    fun render(): DisplayElement
+    fun render() = render(Separator.defaultRules)
+    /**
+     * Render this object with specified [intersectionRules]
+     */
+    fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement
 }
 
 /**

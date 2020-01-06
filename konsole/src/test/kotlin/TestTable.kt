@@ -1,5 +1,4 @@
-import atrico.kotlib.konsole.Table
-import atrico.kotlib.konsole.Tile
+import atrico.kotlib.konsole.*
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
@@ -96,11 +95,11 @@ class TestTable : DisplayElementTestBase() {
         val table = create3x3Table()
             .withHorizontalSeparator('h')
             .withVerticalSeparator('v')
-            .withIntersectRule('X', 'h', 'h', 'v', 'v')
             .build()
+        val rules = listOf(IntersectionRuleImpl('X', 'h', 'h', 'v', 'v'))
 
         // Assert
-        assertTable(table, 3, 3, "1v2v3", "hXhXh", "4v5v6", "hXhXh", "7v8v9")
+        assertTable(table, rules, 3, 3, "1v2v3", "hXhXh", "4v5v6", "hXhXh", "7v8v9")
     }
 
     @Test
@@ -140,8 +139,8 @@ class TestTable : DisplayElementTestBase() {
     fun testUnicodeSeparatorsSingleDouble() {
         // Act
         val table = create3x3Table()
-            .withHorizontalSeparatorUnicodeSingle()
-            .withVerticalSeparatorUnicodeDouble()
+            .withHorizontalSeparator(Separator.unicodeHorizontalSingle)
+            .withVerticalSeparator(Separator.unicodeVerticalDouble)
             .build()
 
         // Assert
@@ -152,8 +151,8 @@ class TestTable : DisplayElementTestBase() {
     fun testUnicodeSeparatorsDoubleSingle() {
         // Act
         val table = create3x3Table()
-            .withHorizontalSeparatorUnicodeDouble()
-            .withVerticalSeparatorUnicodeSingle()
+            .withHorizontalSeparator(Separator.unicodeHorizontalDouble)
+            .withVerticalSeparator(Separator.unicodeVerticalSingle)
             .build()
 
         // Assert
@@ -168,6 +167,18 @@ class TestTable : DisplayElementTestBase() {
         assertThat("Rows", table.rows, equalTo(rows))
         assertThat("Columns", table.columns, equalTo(columns))
         assertDisplay(table, lines)
+    }
+
+    private fun assertTable(
+        table: Table,
+        intersectionRules: Iterable<IntersectionRule>,
+        rows: Int,
+        columns: Int,
+        vararg lines: String
+    ) {
+        assertThat("Rows", table.rows, equalTo(rows))
+        assertThat("Columns", table.columns, equalTo(columns))
+        assertDisplay(table.render(intersectionRules), lines.asIterable())
     }
 
     private fun create3x3Table() =

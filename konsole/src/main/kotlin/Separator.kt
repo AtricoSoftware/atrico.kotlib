@@ -9,16 +9,17 @@ object Separator {
     const val unicodeVerticalSingle = '│'
     const val unicodeVerticalDouble = '║'
     val unicodeRules: IntersectionRule by lazy { UnicodeIntersectionRules() }
+    val defaultRules: Iterable<IntersectionRule> by lazy{listOf(asciiRules, unicodeRules)}
 
     fun horizontalSeparator(char: Char, length: Int): Renderable = HorizontalSeparator(char, length)
     fun verticalSeparator(char: Char, length: Int): Renderable = VerticalSeparator(char, length)
 
     private class HorizontalSeparator(private val char: Char, private val length: Int) : Renderable {
-        override fun render() = Tile((0 until length).map { Pos(it, 0) to Cell(char, CellFlags.SEPARATOR) }.toMap())
+        override fun render(intersectionRules: Iterable<IntersectionRule>) = Tile((0 until length).map { Pos(it, 0) to Cell(char, CellFlags.SEPARATOR) }.toMap())
     }
 
     private class VerticalSeparator(private val char: Char, private val length: Int) : Renderable {
-        override fun render() = Tile((0 until length).map { Pos(0, it) to Cell(char, CellFlags.SEPARATOR) }.toMap())
+        override fun render(intersectionRules: Iterable<IntersectionRule>) = Tile((0 until length).map { Pos(0, it) to Cell(char, CellFlags.SEPARATOR) }.toMap())
     }
 
     private class AsciiIntersectionRules : IntersectionRule {

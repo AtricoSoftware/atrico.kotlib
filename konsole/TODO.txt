@@ -1,6 +1,7 @@
 TODO
 Colours
 DSL like builder
+render context (instead of just intersections)
 
 TEST
 Utils

@@ -1,4 +1,6 @@
 import atrico.kotlib.konsole.Border
+import atrico.kotlib.konsole.IntersectionRule
+import atrico.kotlib.konsole.IntersectionRuleImpl
 import atrico.kotlib.konsole.Tile
 import org.junit.jupiter.api.Test
 
@@ -71,7 +73,7 @@ class TestBorder : DisplayElementTestBase() {
             .build()
 
         // Assert
-        assertDisplay(border, listOf("ttttt") + contentLines.map { "l${it}r" } + "bbbbb")
+        assertDisplay(border.render(emptyList()), listOf("ttttt") + contentLines.map { "l${it}r" } + "bbbbb")
     }
 
     @Test
@@ -82,14 +84,14 @@ class TestBorder : DisplayElementTestBase() {
             .withRight('r')
             .withTop('t')
             .withBottom('b')
-            .withIntersectRule('A', right = 't', below = 'l')
-            .withIntersectRule('B', left = 't', below = 'r')
-            .withIntersectRule('C', right = 'b', above = 'l')
-            .withIntersectRule('D', left = 'b', above = 'r')
             .build()
-
+        val rules = listOf(
+            IntersectionRuleImpl('A', right = 't', below = 'l'),
+            IntersectionRuleImpl('B', left = 't', below = 'r'),
+            IntersectionRuleImpl('C', right = 'b', above = 'l'),
+            IntersectionRuleImpl('D', left = 'b', above = 'r'))
         // Assert
-        assertDisplay(border, listOf("AtttB") + contentLines.map { "l${it}r" } + "CbbbD")
+        assertDisplay(border.render(rules), listOf("AtttB") + contentLines.map { "l${it}r" } + "CbbbD")
     }
 
 

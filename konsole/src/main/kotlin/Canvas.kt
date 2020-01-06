@@ -9,7 +9,7 @@ class Canvas : Renderable {
 
     private val cells = mutableMapOf<Pos, Cell>()
 
-    override fun render(): DisplayElement = Tile(cells)
+    override fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement = Tile(cells)
 
     fun getCell(x: Int, y: Int) = getCell(Pos(x, y))
     fun getCell(pos: Pos): Cell? = cells[pos]

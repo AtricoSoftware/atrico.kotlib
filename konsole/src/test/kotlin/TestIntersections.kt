@@ -1,6 +1,7 @@
 import atrico.kotlib.konsole.Border
 import atrico.kotlib.konsole.Separator
 import atrico.kotlib.konsole.Table
+import atrico.kotlib.konsole.Tile
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
@@ -52,8 +53,8 @@ class TestIntersections : DisplayElementTestBase() {
     fun testUnicodeSeparatorsSingleDoubleBorderSingle() {
         // Act
         val table = create3x3Table()
-            .withHorizontalSeparatorUnicodeSingle()
-            .withVerticalSeparatorUnicodeDouble()
+            .withHorizontalSeparator(Separator.unicodeHorizontalSingle)
+            .withVerticalSeparator(Separator.unicodeVerticalDouble)
             .build()
         val border = Border.Builder(table)
             .withUnicodeSingle()
@@ -67,8 +68,8 @@ class TestIntersections : DisplayElementTestBase() {
     fun testUnicodeSeparatorsDoubleSingleBorderSingle() {
         // Act
         val table = create3x3Table()
-            .withHorizontalSeparatorUnicodeDouble()
-            .withVerticalSeparatorUnicodeSingle()
+            .withHorizontalSeparator(Separator.unicodeHorizontalDouble)
+            .withVerticalSeparator(Separator.unicodeVerticalSingle)
             .build()
         val border = Border.Builder(table)
             .withUnicodeSingle()
@@ -110,8 +111,8 @@ class TestIntersections : DisplayElementTestBase() {
     fun testUnicodeSeparatorsSingleDoubleBorderDouble() {
         // Act
         val table = create3x3Table()
-            .withHorizontalSeparatorUnicodeSingle()
-            .withVerticalSeparatorUnicodeDouble()
+            .withHorizontalSeparator(Separator.unicodeHorizontalSingle)
+            .withVerticalSeparator(Separator.unicodeVerticalDouble)
             .build()
         val border = Border.Builder(table)
             .withUnicodeDouble()
@@ -125,8 +126,8 @@ class TestIntersections : DisplayElementTestBase() {
     fun testUnicodeSeparatorsDoubleSingleBorderDouble() {
         // Act
         val table = create3x3Table()
-            .withHorizontalSeparatorUnicodeDouble()
-            .withVerticalSeparatorUnicodeSingle()
+            .withHorizontalSeparator(Separator.unicodeHorizontalDouble)
+            .withVerticalSeparator(Separator.unicodeVerticalSingle)
             .build()
         val border = Border.Builder(table)
             .withUnicodeDouble()
@@ -146,7 +147,6 @@ class TestIntersections : DisplayElementTestBase() {
             .withBottom(Separator.unicodeHorizontalSingle)
             .withLeft(Separator.unicodeVerticalDouble)
             .withRight(Separator.unicodeVerticalDouble)
-            .withUnicodeIntersectRules()
             .build()
 
         // Assert
@@ -163,12 +163,34 @@ class TestIntersections : DisplayElementTestBase() {
             .withBottom(Separator.unicodeHorizontalDouble)
             .withLeft(Separator.unicodeVerticalSingle)
             .withRight(Separator.unicodeVerticalSingle)
-            .withUnicodeIntersectRules()
             .build()
 
         // Assert
         assertDisplay(border, "╒═══╕", "│123│", "│456│", "│789│", "╘═══╛")
     }
+
+    @Test
+    fun testDeepTree() {
+        // Act
+        val tile01 = Tile("A")
+        val border11 = Border.Builder(tile01)
+            .withUnicodeSingle()
+            .build()
+        val tile02 = Tile("B")
+        val border12 = Border.Builder(tile02)
+            .withRight(Separator.unicodeVerticalSingle)
+            .withTop(Separator.unicodeHorizontalSingle)
+            .withBottom(Separator.unicodeHorizontalSingle)
+            .build()
+        val table2 = Table.Builder()
+            .setCell(0,0, border11)
+            .setCell(1,0, border12)
+            .build()
+
+        // Assert
+        assertDisplay(table2, "┌─┬─┐", "│A│B│", "└─┴─┘")
+    }
+
 
     private fun assertTable(table: Table, rows: Int, columns: Int, vararg lines: String) =
         assertTable(table, rows, columns, lines.asIterable())

@@ -31,7 +31,7 @@ interface DisplayElement : MultilineDisplayable, Renderable {
     /**
      * Default implementation of [Renderable]
      */
-    override fun render(): DisplayElement = this
+    override fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement = this
 }
 
 /**
