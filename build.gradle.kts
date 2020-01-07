@@ -10,7 +10,7 @@ plugins {
 // Publication name
 val publicationName = "$group.$name"
 // Modules that have no example code
-val modulesWithNoExamples = listOf("")
+val modulesWithNoExamples = listOf("testing")
 
 configure(allprojects) {
     repositories {
