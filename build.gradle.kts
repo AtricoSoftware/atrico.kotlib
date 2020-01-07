@@ -97,6 +97,7 @@ configure(subprojects.filterNot { it.name in modulesWithNoExamples }) {
     dependencies {
         add("examplesImplementation", kotlin("stdlib-jdk8"))
         add("examplesImplementation", project(":${name}"))
+        add("examplesImplementation", project(":core"))
     }
 
     val examplesJar by tasks.creating(Jar::class) {
@@ -106,4 +107,11 @@ configure(subprojects.filterNot { it.name in modulesWithNoExamples }) {
     }
 
     (publishing.publications[publicationName] as MavenPublication).artifact(examplesJar)
+}
+
+// Add core module to all others except core
+configure(subprojects.filter { it.name != "core" }) {
+    dependencies {
+        implementation(project(":core"))
+    }
 }
