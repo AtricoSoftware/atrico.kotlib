@@ -1,4 +1,6 @@
 import atrico.kotlib.konsole.*
+import atrico.kotlib.konsole.colors.Colors
+import atrico.kotlib.konsole.kolor.*
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
@@ -159,7 +161,175 @@ class TestTable : DisplayElementTestBase() {
         assertTable(table, 3, 3, "1│2│3", "═╪═╪═", "4│5│6", "═╪═╪═", "7│8│9")
     }
 
+    // region Colors
+    @Test
+    fun testSetCellsColoured() {
+        // Act
+        val table = Table.Builder()
+            .setCell(0, 0, "a".red())
+            .setCell(1, 1, "b".green())
+            .setCell(2, 2, "c".blue())
+            .build()
 
+        // Assert
+        assertTable(table, 3, 3, "a".red() + "  ", " " + "b".green() + " ", "  " + "c".blue())
+    }
+
+    @Test
+    fun testAppendRowColoured() {
+        // Act
+        val table = Table.Builder()
+            .appendRow('a', 'b', 'c')
+            .appendRow('a', Tile('U', "D".red()))
+            .appendRow('a', "LR".green(), 'c', 'd')
+            .appendRow(null, 'b', null, "d".blueBackground())
+            .build()
+
+        // Assert
+        assertTable(
+            table,
+            4,
+            4,
+            "ab c ",
+            "aU   ",
+            " " + "D".red() + "   ",
+            "a" + "LR".green() + "cd",
+            " b  " + "d".blueBackground()
+        )
+    }
+
+    @Test
+    fun testBothSeparatorsWithRulesColoured() {
+        // Act
+        val table = create3x3Table()
+            .withHorizontalSeparator('h', Colors(Color.BLUE))
+            .withVerticalSeparator('v', Colors(Color.BLUE))
+            .build()
+        val rules = listOf(IntersectionRuleImpl('X', 'h', 'h', 'v', 'v'))
+
+        // Assert
+        val v = "v".blue()
+        assertTable(
+            table,
+            rules,
+            3,
+            3,
+            "1" + v + "2" + v + "3",
+            "hXhXh".blue(),
+            "4" + v + "5" + v + "6",
+            "hXhXh".blue(),
+            "7" + v + "8" + v + "9"
+        )
+    }
+
+    @Test
+    fun testAsciiSeparatorsColoured() {
+        // Act
+        val table = create3x3Table()
+            .withSeparatorsAscii(Colors(Color.GREEN))
+            .build()
+
+        // Assert
+        val l = "|".green()
+        assertTable(
+            table,
+            3,
+            3,
+            "1" + l + "2" + l + "3",
+            "-+-+-".green(),
+            "4" + l + "5" + l + "6",
+            "-+-+-".green(),
+            "7" + l + "8" + l + "9"
+        )
+    }
+
+    @Test
+    fun testUnicodeSeparatorsSingleColoured() {
+        // Act
+        val table = create3x3Table()
+            .withSeparatorsUnicodeSingle(Colors(background = Color.CYAN))
+            .build()
+
+        // Assert
+        val l = "│".cyanBackground()
+        assertTable(
+            table,
+            3,
+            3,
+            "1" + l + "2" + l + "3",
+            "─┼─┼─".cyanBackground(),
+            "4" + l + "5" + l + "6",
+            "─┼─┼─".cyanBackground(),
+            "7" + l + "8" + l + "9"
+        )
+    }
+
+    @Test
+    fun testUnicodeSeparatorsDoubleColoured() {
+        // Act
+        val table = create3x3Table()
+            .withSeparatorsUnicodeDouble(Colors(Color.LIGHT_BLUE))
+            .build()
+
+        // Assert
+        val l = "║".lightBlue()
+        assertTable(
+            table,
+            3,
+            3,
+            "1" + l + "2" + l + "3",
+            "═╬═╬═".lightBlue(),
+            "4" + l + "5" + l + "6",
+            "═╬═╬═".lightBlue(),
+            "7" + l + "8" + l + "9"
+        )
+    }
+
+    @Test
+    fun testUnicodeSeparatorsSingleDoubleColoured() {
+        // Act
+        val table = create3x3Table()
+            .withHorizontalSeparator(Separator.unicodeHorizontalSingle, Colors(Color.BLUE))
+            .withVerticalSeparator(Separator.unicodeVerticalDouble, Colors(Color.BLUE))
+            .build()
+
+        // Assert
+        val l = "║".blue()
+        assertTable(
+            table,
+            3,
+            3,
+            "1" + l + "2" + l + "3",
+            "─╫─╫─".blue(),
+            "4" + l + "5" + l + "6",
+            "─╫─╫─".blue(),
+            "7" + l + "8" + l + "9"
+        )
+    }
+
+    @Test
+    fun testUnicodeSeparatorsDoubleSingleColoured() {
+        // Act
+        val table = create3x3Table()
+            .withHorizontalSeparator(Separator.unicodeHorizontalDouble, Colors(Color.YELLOW))
+            .withVerticalSeparator(Separator.unicodeVerticalSingle, Colors(Color.YELLOW))
+            .build()
+
+        // Assert
+        val l = "│".yellow()
+        assertTable(
+            table,
+            3,
+            3,
+            "1" + l + "2" + l + "3",
+            "═╪═╪═".yellow(),
+            "4" + l + "5" + l + "6",
+            "═╪═╪═".yellow(),
+            "7" + l + "8" + l + "9"
+        )
+    }
+
+    // endregion
     private fun assertTable(table: Table, rows: Int, columns: Int, vararg lines: String) =
         assertTable(table, rows, columns, lines.asIterable())
 

@@ -1,5 +1,6 @@
 package atrico.kotlib.konsole
 
+import atrico.kotlib.konsole.colors.ColoredString
 import java.lang.Integer.max
 import java.lang.Integer.min
 
@@ -43,3 +44,6 @@ fun <T> normaliseCells(cells: Map<Pos, T>): Map<Pos, T> {
     if (topLeft == Pos.ORIGIN) return cells
     return cells.map { it.key - topLeft to it.value }.toMap()
 }
+
+internal fun coloredStringsToCells(strings: Iterable<ColoredString>): Iterable<Cell> =
+    strings.flatMap { it.string.map { ch -> Cell(ch, it.colors) } }

@@ -183,8 +183,8 @@ class TestIntersections : DisplayElementTestBase() {
             .withBottom(Separator.unicodeHorizontalSingle)
             .build()
         val table2 = Table.Builder()
-            .setCell(0,0, border11)
-            .setCell(1,0, border12)
+            .setCell(0, 0, border11)
+            .setCell(1, 0, border12)
             .build()
 
         // Assert

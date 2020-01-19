@@ -1,5 +1,7 @@
 import atrico.kotlib.konsole.Canvas
 import atrico.kotlib.konsole.Pos
+import atrico.kotlib.konsole.colors.Colors
+import atrico.kotlib.konsole.kolor.*
 import org.junit.jupiter.api.Test
 
 class TestCanvas : DisplayElementTestBase() {
@@ -55,6 +57,49 @@ class TestCanvas : DisplayElementTestBase() {
         assertDisplay(canvas, "ABab12345")
     }
 
-    // TODO
-    // Colors
+    // region Colors
+
+    @Test
+    fun testSetCellColoured() {
+        // Arrange
+        val canvas = Canvas.blank
+
+        // Act
+        canvas.setCell(Pos.ORIGIN, 'A', Colors(Color.WHITE, Color.BLUE))
+
+        // Assert
+        assertDisplay(canvas, Kolor.colors("A", Color.WHITE, Color.BLUE))
+    }
+
+    @Test
+    fun testSetCellsColoured() {
+        // Arrange
+        val canvas = Canvas.blank
+
+        // Act
+        canvas
+            .setCell(0, 0, 'A', Colors(Color.RED))
+            .setCell(1, 1, 'B', Colors(Color.GREEN))
+            .setCell(2, 2, 'C', Colors(background = Color.BLUE))
+
+        // Assert
+        assertDisplay(canvas, "A".red() + "  ", " " + "B".green() + " ", "  " + "C".blueBackground())
+    }
+
+    @Test
+    fun testSetStringColoured() {
+        // Arrange
+        val canvas = Canvas.blank
+
+        // Act
+        canvas
+            .setString(0, 0, "ABCDE".red())
+            .setString(2, 0, "abcde".greenBackground())
+            .setString(4, 0, "12345".blue())
+
+        // Assert
+        assertDisplay(canvas, "AB".red() + "ab".greenBackground() + "12345".blue())
+    }
+
+    // endregion
 }

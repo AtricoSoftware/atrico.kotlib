@@ -1,5 +1,8 @@
 package atrico.kotlib.konsole
 
+import atrico.kotlib.konsole.colors.ColoredChar
+import atrico.kotlib.konsole.colors.Colors
+
 /**
  * A border around a [Renderable] object
  * Object is [content] and the chars used for the border are specified in [left],[right], [top] and [bottom]
@@ -7,10 +10,10 @@ package atrico.kotlib.konsole
  */
 class Border(
     private val content: Renderable,
-    private val left: Char?,
-    private val right: Char?,
-    private val top: Char?,
-    private val bottom: Char?
+    private val left: ColoredChar?,
+    private val right: ColoredChar?,
+    private val top: ColoredChar?,
+    private val bottom: ColoredChar?
 ) : Renderable {
 
     override fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement {
@@ -31,51 +34,56 @@ class Border(
      * Builder for creation of a [Border]
      */
     class Builder(private val content: Renderable) {
-        private var left: Char? = null
-        private var right: Char? = null
-        private var top: Char? = null
-        private var bottom: Char? = null
+        private var left: ColoredChar? = null
+        private var right: ColoredChar? = null
+        private var top: ColoredChar? = null
+        private var bottom: ColoredChar? = null
 
         fun build(): Border = Border(content, left, right, top, bottom)
-        fun withLeft(c: Char): Builder {
+
+        fun withLeft(c: Char, color: Colors? = null): Builder = withLeft(ColoredChar(c, color ?: Colors.none))
+        fun withLeft(c: ColoredChar): Builder {
             left = c
             return this
         }
 
-        fun withRight(c: Char): Builder {
+        fun withRight(c: Char, color: Colors? = null): Builder = withRight(ColoredChar(c, color ?: Colors.none))
+        fun withRight(c: ColoredChar): Builder {
             right = c
             return this
         }
 
-        fun withTop(c: Char): Builder {
+        fun withTop(c: Char, color: Colors? = null): Builder = withTop(ColoredChar(c, color ?: Colors.none))
+        fun withTop(c: ColoredChar): Builder {
             top = c
             return this
         }
 
-        fun withBottom(c: Char): Builder {
+        fun withBottom(c: Char, color: Colors? = null): Builder = withBottom(ColoredChar(c, color ?: Colors.none))
+        fun withBottom(c: ColoredChar): Builder {
             bottom = c
             return this
         }
 
-        fun withAscii(): Builder {
-            return withLeft(Separator.asciiVertical)
-                .withRight(Separator.asciiVertical)
-                .withTop(Separator.asciiHorizontal)
-                .withBottom(Separator.asciiHorizontal)
+        fun withAscii(color: Colors? = null): Builder {
+            return withLeft(Separator.asciiVertical, color)
+                .withRight(Separator.asciiVertical, color)
+                .withTop(Separator.asciiHorizontal, color)
+                .withBottom(Separator.asciiHorizontal, color)
         }
 
-        fun withUnicodeSingle(): Builder {
-            return withLeft(Separator.unicodeVerticalSingle)
-                .withRight(Separator.unicodeVerticalSingle)
-                .withTop(Separator.unicodeHorizontalSingle)
-                .withBottom(Separator.unicodeHorizontalSingle)
+        fun withUnicodeSingle(color: Colors? = null): Builder {
+            return withLeft(Separator.unicodeVerticalSingle, color)
+                .withRight(Separator.unicodeVerticalSingle, color)
+                .withTop(Separator.unicodeHorizontalSingle, color)
+                .withBottom(Separator.unicodeHorizontalSingle, color)
         }
 
-        fun withUnicodeDouble(): Builder {
-            return withLeft(Separator.unicodeVerticalDouble)
-                .withRight(Separator.unicodeVerticalDouble)
-                .withTop(Separator.unicodeHorizontalDouble)
-                .withBottom(Separator.unicodeHorizontalDouble)
+        fun withUnicodeDouble(color: Colors? = null): Builder {
+            return withLeft(Separator.unicodeVerticalDouble, color)
+                .withRight(Separator.unicodeVerticalDouble, color)
+                .withTop(Separator.unicodeHorizontalDouble, color)
+                .withBottom(Separator.unicodeHorizontalDouble, color)
         }
     }
 }

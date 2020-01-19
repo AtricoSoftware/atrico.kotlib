@@ -1,6 +1,9 @@
 import atrico.kotlib.konsole.Panel
 import atrico.kotlib.konsole.Pos
 import atrico.kotlib.konsole.Tile
+import atrico.kotlib.konsole.kolor.blueBackground
+import atrico.kotlib.konsole.kolor.green
+import atrico.kotlib.konsole.kolor.red
 import atrico.kotlib.konsole.withOffset
 import org.junit.jupiter.api.Test
 
@@ -94,5 +97,32 @@ class TestPanel : DisplayElementTestBase() {
 
         // Assert
         assertDisplay(panel, "z    ", " y   ", "  xbc", "  123", "  DEF")
+    }
+
+    @Test
+    fun testColours() {
+        // Arrange
+        var content1 = Tile("abc".red(), "123", "DEF")
+        var content2 = Tile("x")
+        var content3 = Tile("y".green())
+        var content4 = Tile("z".blueBackground())
+
+        // Act
+        val panel = Panel(
+            content1.withOffset(Pos.ORIGIN),
+            content2.withOffset(Pos.ORIGIN),
+            content3.withOffset(Pos.upLeft(1)),
+            content4.withOffset(Pos.upLeft(2))
+        )
+
+        // Assert
+        assertDisplay(
+            panel,
+            "z".blueBackground() + "    ",
+            " " + "y".green() + "   ",
+            "  x" + "bc".red(),
+            "  123",
+            "  DEF"
+        )
     }
 }

@@ -1,4 +1,7 @@
-import atrico.kotlib.konsole.*
+import atrico.kotlib.konsole.DisplayElement
+import atrico.kotlib.konsole.IntersectionRule
+import atrico.kotlib.konsole.Pos
+import atrico.kotlib.konsole.Renderable
 import atrico.kotlib.multilineDisplay.displayMultiline
 import kotlin.random.Random
 

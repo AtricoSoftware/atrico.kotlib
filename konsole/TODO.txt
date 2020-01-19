@@ -1,8 +1,11 @@
 TODO
-Colours
 DSL like builder
 render context (instead of just intersections)
+Kolor
+Tidy interface - overloads? (to extension funcs or companion invoke?
 
 TEST
 Utils
 Tile ctors
+cell plus flags
+most common color in intersection

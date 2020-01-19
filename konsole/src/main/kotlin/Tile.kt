@@ -1,5 +1,8 @@
 package atrico.kotlib.konsole
 
+import atrico.kotlib.konsole.colors.Colors
+import atrico.kotlib.konsole.kolor.Color
+import atrico.kotlib.konsole.kolor.Kolor
 import java.lang.Integer.max
 
 /**
@@ -14,13 +17,32 @@ class Tile private constructor(override val width: Int, override val height: Int
     override fun toMultilineString(): Sequence<String> =
         sequence {
             (0 until height).forEach { itY ->
+                var currentColors = Colors.none
                 val line = StringBuilder()
                 (0 until width).forEach { itX ->
-                    line.append(cells[Pos(itX, itY)]?.char ?: ' ')
+                    val cell = cells[Pos(itX, itY)] ?: Cell(' ')
+                    // Update colors
+                    line.append(generateColorChange(currentColors, cell.content.colors))
+                    currentColors = cell.content.colors
+                    line.append(cell.content.char)
                 }
+                if (currentColors != Colors.none) line.append(Color.reset)
                 yield(line.toString())
             }
         }
+
+    private fun generateColorChange(old: Colors, new: Colors): String {
+        var reset = ""
+        var fore = ""
+        var back = ""
+        if (old.foreground != new.foreground) {
+            new.foreground?.let { fore = it.foreground } ?: run { reset = Color.reset }
+        }
+        if (old.background != new.background) {
+            new.background?.let { back = it.background } ?: run { reset = Color.reset }
+        }
+        return "$reset$fore$back"
+    }
 
     companion object {
         // Create from vararg objects
@@ -35,10 +57,11 @@ class Tile private constructor(override val width: Int, override val height: Int
             val height = lines.count()
             var width = 0
             for (y in 0 until height) {
-                val line = lines.elementAt(y).toString()
-                width = max(width, line.length)
-                for (x in line.indices) {
-                    if (line[x] != transparent) cells[Pos(x, y)] = Cell(line[x])
+                val line = Kolor.parse(lines.elementAt(y).toString())
+                val lineCells = coloredStringsToCells(line)
+                width = max(width, lineCells.count())
+                for (cell in lineCells.withIndex()) {
+                    if (cell.value.content.char != transparent) cells[Pos(cell.index, y)] = cell.value
                 }
             }
             return Tile(width, height, cells)
@@ -56,4 +79,3 @@ class Tile private constructor(override val width: Int, override val height: Int
         }
     }
 }
-

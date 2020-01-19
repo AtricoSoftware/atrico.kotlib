@@ -1,9 +1,8 @@
 import atrico.kotlib.konsole.DisplayElement
 import atrico.kotlib.konsole.Renderable
+import atrico.kotlib.konsole.kolor.stripColors
 import atrico.kotlib.multilineDisplay.displayMultiline
 import atrico.kotlib.testing.TestBase
-import com.andreapivetta.kolor.Kolor
-import com.andreapivetta.kolor.stripColors
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 
@@ -27,9 +26,9 @@ abstract class DisplayElementTestBase : TestBase() {
         // Cells
         (0 until height).forEach { itY ->
             (0 until width).forEach { itX ->
-                val cell = element.getCell(itX, itY)?.char ?: ' '
+                val cell = element.getCell(itX, itY)?.content?.char ?: ' '
                 val expected = lines.elementAt(itY).padEnd(width)[itX]
-                assertThat("Cells: ", cell, equalTo(expected))
+                assertThat("Cells: ($itX,$itY)", cell, equalTo(expected))
             }
         }
         // Multiline

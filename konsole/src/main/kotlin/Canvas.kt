@@ -1,6 +1,7 @@
 package atrico.kotlib.konsole
 
-import java.util.*
+import atrico.kotlib.konsole.colors.Colors
+import atrico.kotlib.konsole.kolor.Kolor
 
 /**
  * Mutable representation of a 2D display surface
@@ -15,21 +16,24 @@ class Canvas : Renderable {
     fun getCell(pos: Pos): Cell? = cells[pos]
     fun getAllCells(): Map<Pos, Cell> = cells
 
-    fun setCell(x: Int, y: Int, char: Char): Canvas = setCell(Pos(x, y), Cell(char))
-    fun setCell(pos: Pos, char: Char): Canvas = setCell(pos, Cell(char))
+    fun setCell(x: Int, y: Int, char: Char, colors: Colors = Colors.none): Canvas =
+        setCell(Pos(x, y), Cell(char, colors))
+
+    fun setCell(pos: Pos, char: Char, colors: Colors = Colors.none): Canvas = setCell(pos, Cell(char, colors))
     fun setCell(x: Int, y: Int, cell: Cell): Canvas = setCell(Pos(x, y), cell)
     fun setCell(pos: Pos, cell: Cell): Canvas {
         cells[pos] = cell
         return this
     }
 
-    fun setString(x: Int, y: Int, obj: Any, flags: EnumSet<CellFlags> = EnumSet.noneOf(CellFlags::class.java)): Canvas =
+    fun setString(x: Int, y: Int, obj: Any, flags: Set<CellFlags> = emptySet()): Canvas =
         setString(Pos(x, y), obj, flags)
 
-    fun setString(pos: Pos, obj: Any, flags: EnumSet<CellFlags> = EnumSet.noneOf(CellFlags::class.java)): Canvas {
-        var idx = 0;
-        for (ch in obj.toString()) {
-            cells[pos.right(idx++)] = Cell(ch, flags)
+    fun setString(pos: Pos, obj: Any, flags: Set<CellFlags> = emptySet()): Canvas {
+        val parsedString = Kolor.parse(obj.toString())
+        val stringAsCells = coloredStringsToCells(parsedString)
+        for (cell in stringAsCells.withIndex()) {
+            cells[pos.right(cell.index)] = cell.value.plusFlags(flags)
         }
         return this
     }

@@ -14,7 +14,8 @@ fun createTable(separators: SeparatorType): Table.Builder {
     when (separators) {
         DOUBLE -> table.withSeparatorsUnicodeDouble()
         SINGLE -> table.withSeparatorsUnicodeSingle()
-        NONE -> {}// Nothing to do
+        NONE -> {
+        }// Nothing to do
     }
     return table;
 }
@@ -24,7 +25,8 @@ fun createBorder(content: Renderable, separators: SeparatorType): Border.Builder
     when (separators) {
         DOUBLE -> border.withUnicodeDouble()
         SINGLE -> border.withUnicodeSingle()
-        NONE -> {}// Nothing to do
+        NONE -> {
+        }// Nothing to do
     }
     return border;
 }

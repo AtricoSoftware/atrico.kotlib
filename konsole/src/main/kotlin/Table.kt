@@ -1,5 +1,7 @@
 package atrico.kotlib.konsole
 
+import atrico.kotlib.konsole.colors.ColoredChar
+import atrico.kotlib.konsole.colors.Colors
 import java.lang.Integer.max
 
 /**
@@ -7,8 +9,8 @@ import java.lang.Integer.max
  */
 class Table private constructor(
     private val cells: Map<Pos, Renderable>,
-    private val horizontalSeparator: Char?,
-    private val verticalSeparator: Char?
+    private val horizontalSeparator: ColoredChar?,
+    private val verticalSeparator: ColoredChar?
 ) : Renderable {
     val rows: Int
     val columns: Int
@@ -62,8 +64,8 @@ class Table private constructor(
 
     class Builder {
         private val cells = mutableMapOf<Pos, Renderable>()
-        private var horizontalSeparator: Char? = null
-        private var verticalSeparator: Char? = null
+        private var horizontalSeparator: ColoredChar? = null
+        private var verticalSeparator: ColoredChar? = null
 
         private var topLeft: Pos = Pos.ORIGIN
         private var bottomRight: Pos = Pos.ORIGIN
@@ -94,28 +96,34 @@ class Table private constructor(
             return this
         }
 
-        fun withHorizontalSeparator(ch: Char?): Builder {
-            horizontalSeparator = ch
+        fun withHorizontalSeparator(c: Char, color: Colors? = null): Builder =
+            withHorizontalSeparator(ColoredChar(c, color ?: Colors.none))
+
+        fun withHorizontalSeparator(c: ColoredChar): Builder {
+            horizontalSeparator = c
             return this
         }
 
-        fun withVerticalSeparator(ch: Char?): Builder {
-            verticalSeparator = ch
+        fun withVerticalSeparator(c: Char, color: Colors? = null): Builder =
+            withVerticalSeparator(ColoredChar(c, color ?: Colors.none))
+
+        fun withVerticalSeparator(c: ColoredChar): Builder {
+            verticalSeparator = c
             return this
         }
 
-        fun withSeparatorsAscii() =
-            withVerticalSeparator(Separator.asciiVertical)
-                .withHorizontalSeparator(Separator.asciiHorizontal)
+        fun withSeparatorsAscii(color: Colors = Colors.none) =
+            withVerticalSeparator(ColoredChar(Separator.asciiVertical, color))
+                .withHorizontalSeparator(ColoredChar(Separator.asciiHorizontal, color))
 
 
-        fun withSeparatorsUnicodeSingle() =
-            withVerticalSeparator(Separator.unicodeVerticalSingle)
-                .withHorizontalSeparator(Separator.unicodeHorizontalSingle)
+        fun withSeparatorsUnicodeSingle(color: Colors = Colors.none) =
+            withVerticalSeparator(ColoredChar(Separator.unicodeVerticalSingle, color))
+                .withHorizontalSeparator(ColoredChar(Separator.unicodeHorizontalSingle, color))
 
-        fun withSeparatorsUnicodeDouble() =
-            withVerticalSeparator(Separator.unicodeVerticalDouble)
-                .withHorizontalSeparator(Separator.unicodeHorizontalDouble)
+        fun withSeparatorsUnicodeDouble(color: Colors = Colors.none) =
+            withVerticalSeparator(ColoredChar(Separator.unicodeVerticalDouble, color))
+                .withHorizontalSeparator(ColoredChar(Separator.unicodeHorizontalDouble, color))
 
 
         fun build(): Table =

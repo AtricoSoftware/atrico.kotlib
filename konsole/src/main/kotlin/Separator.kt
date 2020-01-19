@@ -1,5 +1,7 @@
 package atrico.kotlib.konsole
 
+import atrico.kotlib.konsole.colors.ColoredChar
+
 object Separator {
     const val asciiHorizontal = '-'
     const val asciiVertical = '|'
@@ -9,17 +11,19 @@ object Separator {
     const val unicodeVerticalSingle = '│'
     const val unicodeVerticalDouble = '║'
     val unicodeRules: IntersectionRule by lazy { UnicodeIntersectionRules() }
-    val defaultRules: Iterable<IntersectionRule> by lazy{listOf(asciiRules, unicodeRules)}
+    val defaultRules: Iterable<IntersectionRule> by lazy { listOf(asciiRules, unicodeRules) }
 
-    fun horizontalSeparator(char: Char, length: Int): Renderable = HorizontalSeparator(char, length)
-    fun verticalSeparator(char: Char, length: Int): Renderable = VerticalSeparator(char, length)
+    fun horizontalSeparator(char: ColoredChar, length: Int): Renderable = HorizontalSeparator(char, length)
+    fun verticalSeparator(char: ColoredChar, length: Int): Renderable = VerticalSeparator(char, length)
 
-    private class HorizontalSeparator(private val char: Char, private val length: Int) : Renderable {
-        override fun render(intersectionRules: Iterable<IntersectionRule>) = Tile((0 until length).map { Pos(it, 0) to Cell(char, CellFlags.SEPARATOR) }.toMap())
+    private class HorizontalSeparator(private val char: ColoredChar, private val length: Int) : Renderable {
+        override fun render(intersectionRules: Iterable<IntersectionRule>) =
+            Tile((0 until length).map { Pos(it, 0) to Cell(char, CellFlags.SEPARATOR) }.toMap())
     }
 
-    private class VerticalSeparator(private val char: Char, private val length: Int) : Renderable {
-        override fun render(intersectionRules: Iterable<IntersectionRule>) = Tile((0 until length).map { Pos(0, it) to Cell(char, CellFlags.SEPARATOR) }.toMap())
+    private class VerticalSeparator(private val char: ColoredChar, private val length: Int) : Renderable {
+        override fun render(intersectionRules: Iterable<IntersectionRule>) =
+            Tile((0 until length).map { Pos(0, it) to Cell(char, CellFlags.SEPARATOR) }.toMap())
     }
 
     private class AsciiIntersectionRules : IntersectionRule {
@@ -46,13 +50,23 @@ object Separator {
             (Parts.LEFT + Parts.RIGHT + Parts.ABOVE + Parts.BELOW) to corner
         )
 
-        override fun match(left: Char?, right: Char?, above: Char?, below: Char?): Char? {
+        override fun match(
+            left: ColoredChar?,
+            right: ColoredChar?,
+            above: ColoredChar?,
+            below: ColoredChar?
+        ): ColoredChar? {
             var parts = 0
-            if (left == asciiHorizontal) parts += Parts.LEFT
-            if (right == asciiHorizontal) parts += Parts.RIGHT
-            if (above == asciiVertical) parts += Parts.ABOVE
-            if (below == asciiVertical) parts += Parts.BELOW
-            return matchers[parts]
+            if (left?.char == asciiHorizontal) parts += Parts.LEFT
+            if (right?.char == asciiHorizontal) parts += Parts.RIGHT
+            if (above?.char == asciiVertical) parts += Parts.ABOVE
+            if (below?.char == asciiVertical) parts += Parts.BELOW
+            return matchers[parts]?.let {
+                ColoredChar(
+                    it,
+                    getMostCommonColor(left?.colors, right?.colors, above?.colors, below?.colors)
+                )
+            }
         }
     }
 
@@ -120,17 +134,27 @@ object Separator {
             (Parts.LEFT_DOUBLE + Parts.RIGHT_DOUBLE + Parts.ABOVE_SINGLE + Parts.BELOW_SINGLE) to '╪'
         )
 
-        override fun match(left: Char?, right: Char?, above: Char?, below: Char?): Char? {
+        override fun match(
+            left: ColoredChar?,
+            right: ColoredChar?,
+            above: ColoredChar?,
+            below: ColoredChar?
+        ): ColoredChar? {
             var parts = 0
-            if (left == unicodeHorizontalSingle) parts += Parts.LEFT_SINGLE
-            else if (left == unicodeHorizontalDouble) parts += Parts.LEFT_DOUBLE
-            if (right == unicodeHorizontalSingle) parts += Parts.RIGHT_SINGLE
-            else if (right == unicodeHorizontalDouble) parts += Parts.RIGHT_DOUBLE
-            if (above == unicodeVerticalSingle) parts += Parts.ABOVE_SINGLE
-            else if (above == unicodeVerticalDouble) parts += Parts.ABOVE_DOUBLE
-            if (below == unicodeVerticalSingle) parts += Parts.BELOW_SINGLE
-            else if (below == unicodeVerticalDouble) parts += Parts.BELOW_DOUBLE
-            return matchers[parts]
+            if (left?.char == unicodeHorizontalSingle) parts += Parts.LEFT_SINGLE
+            else if (left?.char == unicodeHorizontalDouble) parts += Parts.LEFT_DOUBLE
+            if (right?.char == unicodeHorizontalSingle) parts += Parts.RIGHT_SINGLE
+            else if (right?.char == unicodeHorizontalDouble) parts += Parts.RIGHT_DOUBLE
+            if (above?.char == unicodeVerticalSingle) parts += Parts.ABOVE_SINGLE
+            else if (above?.char == unicodeVerticalDouble) parts += Parts.ABOVE_DOUBLE
+            if (below?.char == unicodeVerticalSingle) parts += Parts.BELOW_SINGLE
+            else if (below?.char == unicodeVerticalDouble) parts += Parts.BELOW_DOUBLE
+            return matchers[parts]?.let {
+                ColoredChar(
+                    it,
+                    getMostCommonColor(left?.colors, right?.colors, above?.colors, below?.colors)
+                )
+            }
         }
     }
 }
