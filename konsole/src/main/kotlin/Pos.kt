@@ -10,11 +10,11 @@ data class Pos(val x: Int, val y: Int) {
 
     companion object {
         val ORIGIN by lazy { Pos(0, 0) }
-        fun allPos(width: Int, height: Int) = allPos(ORIGIN, Pos(width - 1, height - 1))
+        fun allPos(width: Int, height: Int) = allPos(ORIGIN, Pos(width, height ))
         fun allPos(topRight: Pos, bottomLeft: Pos) =
             sequence {
-                (topRight.x..bottomLeft.x).forEach { itX ->
-                    (topRight.y..bottomLeft.y).forEach { itY ->
+                (topRight.y until bottomLeft.y).forEach { itY ->
+                    (topRight.x until bottomLeft.x).forEach { itX ->
                         yield(Pos(itX, itY))
                     }
                 }
