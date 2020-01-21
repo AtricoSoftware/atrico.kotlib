@@ -6,6 +6,8 @@ data class Pos(val x: Int, val y: Int) {
     operator fun minus(rhs: Pos) = Pos(x - rhs.x, y - rhs.y)
     operator fun times(rhs: Int) = Pos(x * rhs, y * rhs)
 
+    override fun toString() = "($x,$y)"
+
     companion object {
         val ORIGIN by lazy { Pos(0, 0) }
         fun allPos(width: Int, height: Int) = allPos(ORIGIN, Pos(width - 1, height - 1))

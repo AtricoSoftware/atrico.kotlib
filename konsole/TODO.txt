@@ -3,6 +3,13 @@ render context (instead of just intersections)
 Tidy interface - overloads? (to extension funcs or companion invoke?
 
 TEST
+Pos
+Separator
+IntersectionRule
+Display element
+Canvas
+Cell
+
 Utils
 Tile ctors
 cell plus flags
