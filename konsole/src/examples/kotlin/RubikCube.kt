@@ -1,7 +1,7 @@
 import atrico.kotlib.konsole.*
-import atrico.kotlib.konsole.colors.ColoredChar
-import atrico.kotlib.konsole.colors.Colors
-import atrico.kotlib.konsole.kolor.Color
+import atrico.kotlib.konsole.color.Color
+import atrico.kotlib.konsole.color.ColoredChar
+import atrico.kotlib.konsole.color.Colors
 import atrico.kotlib.multilineDisplay.displayMultiline
 
 /**

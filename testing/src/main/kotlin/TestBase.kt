@@ -1,5 +1,6 @@
 package atrico.kotlib.testing
 
+import kotlin.math.abs
 import kotlin.random.Random
 
 /**
@@ -12,6 +13,24 @@ abstract class TestBase {
      * Test cases for all [Boolean] values
      */
     protected val booleanTestCases = listOf(true, false)
+
+    // region Random values
+
+    /**
+     * Generate a random string
+     */
+    protected fun randomString(length: Int = 5): String =
+        random.nextBytes(length).map { byteToChar(it) }.joinToString("")
+
+    private fun byteToChar(byte: Byte) = when (val windowed = abs(byte.toInt()) % 62) {
+        in 0..25 -> (windowed + 'A'.toInt()).toChar()
+        in 26..51 -> (windowed - 26 + 'a'.toInt()).toChar()
+        in 52..61 -> (windowed - 52 + '0'.toInt()).toChar()
+        else -> {
+            // Cannot reach here
+            '*'
+        }
+    }
 
     /**
      * Get unique random values
@@ -27,4 +46,5 @@ abstract class TestBase {
             value
         }
     }
+    // endregion Random values
 }

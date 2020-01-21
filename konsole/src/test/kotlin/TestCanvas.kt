@@ -1,7 +1,7 @@
 import atrico.kotlib.konsole.Canvas
 import atrico.kotlib.konsole.Pos
-import atrico.kotlib.konsole.colors.Colors
-import atrico.kotlib.konsole.kolor.*
+import atrico.kotlib.konsole.color.*
+import atrico.kotlib.konsole.color.Color
 import org.junit.jupiter.api.Test
 
 class TestCanvas : DisplayElementTestBase() {
@@ -68,7 +68,7 @@ class TestCanvas : DisplayElementTestBase() {
         canvas.setCell(Pos.ORIGIN, 'A', Colors(Color.WHITE, Color.BLUE))
 
         // Assert
-        assertDisplay(canvas, Kolor.colors("A", Color.WHITE, Color.BLUE))
+        assertDisplay(canvas, Color.colored("A", Color.WHITE, Color.BLUE))
     }
 
     @Test

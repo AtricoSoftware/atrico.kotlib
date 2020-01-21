@@ -1,6 +1,6 @@
 package atrico.kotlib.konsole
 
-import atrico.kotlib.konsole.colors.ColoredString
+import atrico.kotlib.konsole.color.ColoredString
 import java.lang.Integer.max
 import java.lang.Integer.min
 

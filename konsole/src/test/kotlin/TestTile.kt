@@ -1,8 +1,8 @@
 import atrico.kotlib.konsole.Tile
-import atrico.kotlib.konsole.kolor.blue
-import atrico.kotlib.konsole.kolor.greenBackground
-import atrico.kotlib.konsole.kolor.red
-import atrico.kotlib.konsole.kolor.stripColors
+import atrico.kotlib.konsole.color.blue
+import atrico.kotlib.konsole.color.greenBackground
+import atrico.kotlib.konsole.color.red
+import atrico.kotlib.konsole.color.stripColors
 import org.junit.jupiter.api.Test
 
 class TestTile : DisplayElementTestBase() {

@@ -1,8 +1,11 @@
 import atrico.kotlib.konsole.Border
 import atrico.kotlib.konsole.IntersectionRuleImpl
 import atrico.kotlib.konsole.Tile
-import atrico.kotlib.konsole.colors.Colors
-import atrico.kotlib.konsole.kolor.*
+import atrico.kotlib.konsole.color.Color
+import atrico.kotlib.konsole.color.Colors
+import atrico.kotlib.konsole.color.blue
+import atrico.kotlib.konsole.color.greenBackground
+import atrico.kotlib.konsole.color.red
 import org.junit.jupiter.api.Test
 
 class TestBorder : DisplayElementTestBase() {
@@ -171,7 +174,7 @@ class TestBorder : DisplayElementTestBase() {
         }
 
         // Assert
-        assertDisplay(border, contentLines + Kolor.colors("bbb", Color.WHITE, Color.BLACK))
+        assertDisplay(border, contentLines + Color.colored("bbb", Color.WHITE, Color.BLACK))
     }
 
     @Test

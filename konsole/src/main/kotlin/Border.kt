@@ -1,7 +1,7 @@
 package atrico.kotlib.konsole
 
-import atrico.kotlib.konsole.colors.ColoredChar
-import atrico.kotlib.konsole.colors.Colors
+import atrico.kotlib.konsole.color.ColoredChar
+import atrico.kotlib.konsole.color.Colors
 
 /**
  * A border around a [Renderable] object

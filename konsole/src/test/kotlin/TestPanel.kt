@@ -1,9 +1,9 @@
 import atrico.kotlib.konsole.Panel
 import atrico.kotlib.konsole.Pos
 import atrico.kotlib.konsole.Tile
-import atrico.kotlib.konsole.kolor.blueBackground
-import atrico.kotlib.konsole.kolor.green
-import atrico.kotlib.konsole.kolor.red
+import atrico.kotlib.konsole.color.blueBackground
+import atrico.kotlib.konsole.color.green
+import atrico.kotlib.konsole.color.red
 import atrico.kotlib.konsole.withOffset
 import org.junit.jupiter.api.Test
 

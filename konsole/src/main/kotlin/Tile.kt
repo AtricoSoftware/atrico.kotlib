@@ -1,8 +1,7 @@
 package atrico.kotlib.konsole
 
-import atrico.kotlib.konsole.colors.Colors
-import atrico.kotlib.konsole.kolor.Color
-import atrico.kotlib.konsole.kolor.Kolor
+import atrico.kotlib.konsole.color.Color
+import atrico.kotlib.konsole.color.Colors
 import java.lang.Integer.max
 
 /**
@@ -57,7 +56,7 @@ class Tile private constructor(override val width: Int, override val height: Int
             val height = lines.count()
             var width = 0
             for (y in 0 until height) {
-                val line = Kolor.parse(lines.elementAt(y).toString())
+                val line = Color.parseText(lines.elementAt(y).toString())
                 val lineCells = coloredStringsToCells(line)
                 width = max(width, lineCells.count())
                 for (cell in lineCells.withIndex()) {

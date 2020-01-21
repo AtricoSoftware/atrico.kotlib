@@ -1,6 +1,6 @@
 import atrico.kotlib.konsole.DisplayElement
 import atrico.kotlib.konsole.Renderable
-import atrico.kotlib.konsole.kolor.stripColors
+import atrico.kotlib.konsole.color.stripColors
 import atrico.kotlib.multilineDisplay.displayMultiline
 import atrico.kotlib.testing.TestBase
 import com.natpryce.hamkrest.assertion.assertThat

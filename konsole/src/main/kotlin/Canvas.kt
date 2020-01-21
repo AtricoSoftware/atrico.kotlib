@@ -1,7 +1,7 @@
 package atrico.kotlib.konsole
 
-import atrico.kotlib.konsole.colors.Colors
-import atrico.kotlib.konsole.kolor.Kolor
+import atrico.kotlib.konsole.color.Color
+import atrico.kotlib.konsole.color.Colors
 
 /**
  * Mutable representation of a 2D display surface
@@ -30,7 +30,7 @@ class Canvas : Renderable {
         setString(Pos(x, y), obj, flags)
 
     fun setString(pos: Pos, obj: Any, flags: Set<CellFlags> = emptySet()): Canvas {
-        val parsedString = Kolor.parse(obj.toString())
+        val parsedString = Color.parseText(obj.toString())
         val stringAsCells = coloredStringsToCells(parsedString)
         for (cell in stringAsCells.withIndex()) {
             cells[pos.right(cell.index)] = cell.value.plusFlags(flags)

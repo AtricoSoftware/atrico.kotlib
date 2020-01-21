@@ -1,6 +1,6 @@
 import atrico.kotlib.konsole.*
-import atrico.kotlib.konsole.colors.Colors
-import atrico.kotlib.konsole.kolor.*
+import atrico.kotlib.konsole.color.*
+import atrico.kotlib.konsole.color.Color
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test

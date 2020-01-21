@@ -1,6 +1,6 @@
 package atrico.kotlib.konsole
 
-import atrico.kotlib.konsole.colors.ColoredChar
+import atrico.kotlib.konsole.color.ColoredChar
 
 object Separator {
     const val asciiHorizontal = '-'
