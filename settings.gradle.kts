@@ -1,4 +1,4 @@
 rootProject.name = "atrico.kotlib"
 include("core")
-include("maths")
+include("kmaths")
 include("testing")
