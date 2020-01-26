@@ -1,6 +1,8 @@
 package color
 
+import atrico.kotlib.konsole.Table
 import atrico.kotlib.konsole.color.*
+import atrico.kotlib.multilineDisplay.displayMultiline
 import atrico.kotlib.testing.TestBase
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -232,12 +234,24 @@ class TestColorEnum : TestBase() {
         assertThat("Both Extension", resultBothExtension, equalTo(text))
     }
 
+    @Test
+    fun testDisplayColors() {
+        Table {
+            appendRow("Foreground")
+            Color.values()
+                .forEach { appendRow(Color.colored(it.name, it, Color.BLACK), Color.colored(it.name, it, Color.WHITE)) }
+            appendRow("Background")
+            Color.values()
+                .forEach { appendRow(Color.colored(it.name, Color.BLACK, it), Color.colored(it.name, Color.WHITE, it)) }
+        }.render().displayMultiline()
+    }
+
     data class AnsiCode private constructor(val color: Color, val foreground: String, val background: String) {
         constructor(color: Color, code: Int) : this(color, "\u001B[${code}m", "\u001B[${code + 10}m")
     }
 
     private val ansiCodes = listOf(
-        AnsiCode(Color.WHITE, 30),
+        AnsiCode(Color.BLACK, 30),
         AnsiCode(Color.RED, 31),
         AnsiCode(Color.GREEN, 32),
         AnsiCode(Color.YELLOW, 33),
@@ -245,6 +259,7 @@ class TestColorEnum : TestBase() {
         AnsiCode(Color.MAGENTA, 35),
         AnsiCode(Color.CYAN, 36),
         AnsiCode(Color.LIGHT_GRAY, 37),
+        AnsiCode(Color.DEFAULT, 39),
         AnsiCode(Color.DARK_GRAY, 90),
         AnsiCode(Color.LIGHT_RED, 91),
         AnsiCode(Color.LIGHT_GREEN, 92),
@@ -252,7 +267,7 @@ class TestColorEnum : TestBase() {
         AnsiCode(Color.LIGHT_BLUE, 94),
         AnsiCode(Color.LIGHT_MAGENTA, 95),
         AnsiCode(Color.LIGHT_CYAN, 96),
-        AnsiCode(Color.BLACK, 97)
+        AnsiCode(Color.WHITE, 97)
     )
 }
 

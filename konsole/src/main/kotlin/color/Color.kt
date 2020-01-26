@@ -4,7 +4,7 @@ package atrico.kotlib.konsole.color
  * An enumeration of colors supported by most terminals. Can be applied to both foreground and background.
  */
 enum class Color(baseCode: Int) {
-    WHITE(30),
+    BLACK(30),
     RED(31),
     GREEN(32),
     YELLOW(33),
@@ -13,6 +13,8 @@ enum class Color(baseCode: Int) {
     CYAN(36),
     LIGHT_GRAY(37),
 
+    DEFAULT(39),
+
     DARK_GRAY(90),
     LIGHT_RED(91),
     LIGHT_GREEN(92),
@@ -20,7 +22,7 @@ enum class Color(baseCode: Int) {
     LIGHT_BLUE(94),
     LIGHT_MAGENTA(95),
     LIGHT_CYAN(96),
-    BLACK(97);
+    WHITE(97);
 
     /**
      *  ANSI modifier string to apply the color to the text itself
@@ -84,7 +86,7 @@ enum class Color(baseCode: Int) {
 
         private fun fromValueImpl(value: Int): Color? =
             when (value) {
-                30 -> WHITE
+                30 -> BLACK
                 31 -> RED
                 32 -> GREEN
                 33 -> YELLOW
@@ -92,6 +94,7 @@ enum class Color(baseCode: Int) {
                 35 -> MAGENTA
                 36 -> CYAN
                 37 -> LIGHT_GRAY
+                39 -> DEFAULT
                 90 -> DARK_GRAY
                 91 -> LIGHT_RED
                 92 -> LIGHT_GREEN
@@ -99,7 +102,7 @@ enum class Color(baseCode: Int) {
                 94 -> LIGHT_BLUE
                 95 -> LIGHT_MAGENTA
                 96 -> LIGHT_CYAN
-                97 -> BLACK
+                97 -> WHITE
                 else -> null
             }
 
