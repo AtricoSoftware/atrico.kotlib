@@ -1,4 +1,3 @@
-import atrico.kotlib.konsole.DisplayElement
 import atrico.kotlib.konsole.IntersectionRule
 import atrico.kotlib.konsole.Pos
 import atrico.kotlib.konsole.Renderable
@@ -25,20 +24,21 @@ class SudokuExample(
         }.toMap()
     }
 
-    override fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement {
-        val outerTable = createTable(major)
-        Pos.allPos(3, 3).forEach { itBox ->
-            val innerTable = createTable(minor)
-            Pos.allPos(3, 3).forEach { itOffset ->
-                val cellValue = cells[itBox * 3 + itOffset]
-                innerTable.setCell(itOffset, cellValue ?: ' ')
-            }
-            outerTable.setCell(itBox, innerTable.build())
-        }
-        return createBorder(outerTable.build(), border).build().render(intersectionRules)
-
-    }
+    override fun render(intersectionRules: Iterable<IntersectionRule>) =
+        createBorder(
+            createTable(major) {
+                Pos.allPos(3, 3).forEach { itBox ->
+                    setCell(itBox, createTable(minor) {
+                        Pos.allPos(3, 3).forEach { itOffset ->
+                            val cellValue = cells[itBox * 3 + itOffset]
+                            setCell(itOffset, cellValue ?: ' ')
+                        }
+                    })
+                }
+            }, border
+        ).render(intersectionRules)
 }
+
 
 fun main() {
     val sudoku1 = SudokuExample(SeparatorType.DOUBLE, SeparatorType.SINGLE, SeparatorType.NONE)

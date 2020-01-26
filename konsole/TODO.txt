@@ -1,5 +1,4 @@
 TODO
-DSL like builder
 render context (instead of just intersections)
 Kolor
 Tidy interface - overloads? (to extension funcs or companion invoke?

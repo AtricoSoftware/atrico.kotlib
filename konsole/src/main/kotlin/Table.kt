@@ -61,8 +61,20 @@ class Table private constructor(
         return Panel(children).render(intersectionRules)
     }
 
+    interface Builder {
+        fun setCell(x: Int, y: Int, obj: Any)
+        fun setCell(pos: Pos, obj: Any)
+        fun appendRow(vararg objs: Any?)
+        fun withHorizontalSeparator(c: Char, color: Colors? = null)
+        fun withHorizontalSeparator(c: ColoredChar)
+        fun withVerticalSeparator(c: Char, color: Colors? = null)
+        fun withVerticalSeparator(c: ColoredChar)
+        fun withSeparatorsAscii(color: Colors = Colors.none)
+        fun withSeparatorsUnicodeSingle(color: Colors = Colors.none)
+        fun withSeparatorsUnicodeDouble(color: Colors = Colors.none)
+    }
 
-    class Builder {
+    private class BuilderImpl : Builder {
         private val cells = mutableMapOf<Pos, Renderable>()
         private var horizontalSeparator: ColoredChar? = null
         private var verticalSeparator: ColoredChar? = null
@@ -70,18 +82,19 @@ class Table private constructor(
         private var topLeft: Pos = Pos.ORIGIN
         private var bottomRight: Pos = Pos.ORIGIN
 
-        fun setCell(x: Int, y: Int, obj: Any): Builder = setCell(Pos(x, y), obj)
-        fun setCell(pos: Pos, obj: Any): Builder {
+        fun build(): Table = Table(normaliseCells(cells), horizontalSeparator, verticalSeparator)
+
+        override fun setCell(x: Int, y: Int, obj: Any) = setCell(Pos(x, y), obj)
+        override fun setCell(pos: Pos, obj: Any) {
             cells[pos] = when (obj) {
                 is Renderable -> obj
                 else -> Tile(obj)
             }
             topLeft = topLeft.topLeft(pos)
             bottomRight = bottomRight.bottomRight(pos)
-            return this
         }
 
-        fun appendRow(vararg objs: Any?): Builder {
+        override fun appendRow(vararg objs: Any?) {
             var pos = Pos(topLeft.x - 1, bottomRight.y + 1)
             for (obj in objs) {
                 pos = pos.right()
@@ -93,40 +106,48 @@ class Table private constructor(
                 }
             }
             bottomRight = bottomRight.bottomRight(pos)
-            return this
         }
 
-        fun withHorizontalSeparator(c: Char, color: Colors? = null): Builder =
+        override fun withHorizontalSeparator(c: Char, color: Colors?) =
             withHorizontalSeparator(ColoredChar(c, color ?: Colors.none))
 
-        fun withHorizontalSeparator(c: ColoredChar): Builder {
+        override fun withHorizontalSeparator(c: ColoredChar) {
             horizontalSeparator = c
-            return this
         }
 
-        fun withVerticalSeparator(c: Char, color: Colors? = null): Builder =
+        override fun withVerticalSeparator(c: Char, color: Colors?) =
             withVerticalSeparator(ColoredChar(c, color ?: Colors.none))
 
-        fun withVerticalSeparator(c: ColoredChar): Builder {
+        override fun withVerticalSeparator(c: ColoredChar) {
             verticalSeparator = c
-            return this
         }
 
-        fun withSeparatorsAscii(color: Colors = Colors.none) =
+        override fun withSeparatorsAscii(color: Colors) {
             withVerticalSeparator(ColoredChar(Separator.asciiVertical, color))
-                .withHorizontalSeparator(ColoredChar(Separator.asciiHorizontal, color))
+            withHorizontalSeparator(ColoredChar(Separator.asciiHorizontal, color))
+
+        }
 
 
-        fun withSeparatorsUnicodeSingle(color: Colors = Colors.none) =
+        override fun withSeparatorsUnicodeSingle(color: Colors) {
+
             withVerticalSeparator(ColoredChar(Separator.unicodeVerticalSingle, color))
-                .withHorizontalSeparator(ColoredChar(Separator.unicodeHorizontalSingle, color))
+            withHorizontalSeparator(ColoredChar(Separator.unicodeHorizontalSingle, color))
+        }
 
-        fun withSeparatorsUnicodeDouble(color: Colors = Colors.none) =
+        override fun withSeparatorsUnicodeDouble(color: Colors) {
             withVerticalSeparator(ColoredChar(Separator.unicodeVerticalDouble, color))
-                .withHorizontalSeparator(ColoredChar(Separator.unicodeHorizontalDouble, color))
+            withHorizontalSeparator(ColoredChar(Separator.unicodeHorizontalDouble, color))
+        }
 
+    }
 
-        fun build(): Table =
-            Table(normaliseCells(cells), horizontalSeparator, verticalSeparator)
+    companion object {
+        operator fun invoke() = invoke({})
+        operator fun invoke(config: Builder.() -> Unit): Table {
+            val builder = BuilderImpl()
+            builder.config()
+            return builder.build()
+        }
     }
 }

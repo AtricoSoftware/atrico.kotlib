@@ -9,24 +9,22 @@ enum class SeparatorType {
     DOUBLE
 }
 
-fun createTable(separators: SeparatorType): Table.Builder {
-    val table = Table.Builder()
+fun createTable(separators: SeparatorType) = createTable(separators, {})
+fun createTable(separators: SeparatorType, extra: Table.Builder.() -> Unit) = Table {
     when (separators) {
-        DOUBLE -> table.withSeparatorsUnicodeDouble()
-        SINGLE -> table.withSeparatorsUnicodeSingle()
+        DOUBLE -> withSeparatorsUnicodeDouble()
+        SINGLE -> withSeparatorsUnicodeSingle()
         NONE -> {
-        }// Nothing to do
+        }
     }
-    return table;
+    extra()
 }
 
-fun createBorder(content: Renderable, separators: SeparatorType): Border.Builder {
-    val border = Border.Builder(content)
+fun createBorder(content: Renderable, separators: SeparatorType) = Border(content) {
     when (separators) {
-        DOUBLE -> border.withUnicodeDouble()
-        SINGLE -> border.withUnicodeSingle()
+        DOUBLE -> withUnicodeDouble()
+        SINGLE -> withUnicodeSingle()
         NONE -> {
-        }// Nothing to do
+        }
     }
-    return border;
 }

@@ -9,8 +9,7 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testEmpty() {
         // Act
-        val table = Table.Builder()
-            .build()
+        val table = Table()
 
         // Assert
         assertTable(table, 0, 0)
@@ -19,11 +18,11 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testSetCells() {
         // Act
-        val table = Table.Builder()
-            .setCell(0, 0, 'a')
-            .setCell(1, 1, 'b')
-            .setCell(2, 2, 'c')
-            .build()
+        val table = Table {
+            setCell(0, 0, 'a')
+            setCell(1, 1, 'b')
+            setCell(2, 2, 'c')
+        }
 
         // Assert
         assertTable(table, 3, 3, "a  ", " b ", "  c")
@@ -32,11 +31,11 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testSetCellsDifferentWidths() {
         // Act
-        val table = Table.Builder()
-            .setCell(0, 0, "one")
-            .setCell(1, 1, '2')
-            .setCell(2, 2, "three")
-            .build()
+        val table = Table {
+            setCell(0, 0, "one")
+            setCell(1, 1, '2')
+            setCell(2, 2, "three")
+        }
 
         // Assert
         assertTable(table, 3, 3, "one      ", "   2     ", "    three")
@@ -45,11 +44,11 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testSetCellsDifferentHeights() {
         // Act
-        val table = Table.Builder()
-            .setCell(0, 0, Tile('1'))
-            .setCell(1, 1, Tile("t", "w", "o"))
-            .setCell(2, 2, Tile("t", "h", "r", "e", "e"))
-            .build()
+        val table = Table {
+            setCell(0, 0, Tile('1'))
+            setCell(1, 1, Tile("t", "w", "o"))
+            setCell(2, 2, Tile("t", "h", "r", "e", "e"))
+        }
 
         // Assert
         assertTable(table, 3, 3, "1  ", " t ", " w ", " o ", "  t", "  h", "  r", "  e", "  e")
@@ -58,12 +57,12 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testAppendRow() {
         // Act
-        val table = Table.Builder()
-            .appendRow('a', 'b', 'c')
-            .appendRow('a', Tile('U', 'D'))
-            .appendRow('a', "LR", 'c', 'd')
-            .appendRow(null, 'b', null, 'd')
-            .build()
+        val table = Table {
+            appendRow('a', 'b', 'c')
+            appendRow('a', Tile('U', 'D'))
+            appendRow('a', "LR", 'c', 'd')
+            appendRow(null, 'b', null, 'd')
+        }
 
         // Assert
         assertTable(table, 4, 4, "ab c ", "aU   ", " D   ", "aLRcd", " b  d")
@@ -72,9 +71,9 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testHorizontalSeparator() {
         // Act
-        val table = create3x3Table()
-            .withHorizontalSeparator('h')
-            .build()
+        val table = create3x3Table {
+            withHorizontalSeparator('h')
+        }
 
         // Assert
         assertTable(table, 3, 3, "123", "hhh", "456", "hhh", "789")
@@ -83,9 +82,9 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testVerticalSeparator() {
         // Act
-        val table = create3x3Table()
-            .withVerticalSeparator('v')
-            .build()
+        val table = create3x3Table {
+            withVerticalSeparator('v')
+        }
 
         // Assert
         assertTable(table, 3, 3, "1v2v3", "4v5v6", "7v8v9")
@@ -94,10 +93,10 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testBothSeparatorsWithRules() {
         // Act
-        val table = create3x3Table()
-            .withHorizontalSeparator('h')
-            .withVerticalSeparator('v')
-            .build()
+        val table = create3x3Table {
+            withHorizontalSeparator('h')
+            withVerticalSeparator('v')
+        }
         val rules = listOf(IntersectionRuleImpl('X', 'h', 'h', 'v', 'v'))
 
         // Assert
@@ -107,9 +106,9 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testAsciiSeparators() {
         // Act
-        val table = create3x3Table()
-            .withSeparatorsAscii()
-            .build()
+        val table = create3x3Table {
+            withSeparatorsAscii()
+        }
 
         // Assert
         assertTable(table, 3, 3, "1|2|3", "-+-+-", "4|5|6", "-+-+-", "7|8|9")
@@ -118,9 +117,9 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testUnicodeSeparatorsSingle() {
         // Act
-        val table = create3x3Table()
-            .withSeparatorsUnicodeSingle()
-            .build()
+        val table = create3x3Table {
+            withSeparatorsUnicodeSingle()
+        }
 
         // Assert
         assertTable(table, 3, 3, "1│2│3", "─┼─┼─", "4│5│6", "─┼─┼─", "7│8│9")
@@ -129,9 +128,9 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testUnicodeSeparatorsDouble() {
         // Act
-        val table = create3x3Table()
-            .withSeparatorsUnicodeDouble()
-            .build()
+        val table = create3x3Table {
+            withSeparatorsUnicodeDouble()
+        }
 
         // Assert
         assertTable(table, 3, 3, "1║2║3", "═╬═╬═", "4║5║6", "═╬═╬═", "7║8║9")
@@ -140,10 +139,10 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testUnicodeSeparatorsSingleDouble() {
         // Act
-        val table = create3x3Table()
-            .withHorizontalSeparator(Separator.unicodeHorizontalSingle)
-            .withVerticalSeparator(Separator.unicodeVerticalDouble)
-            .build()
+        val table = create3x3Table {
+            withHorizontalSeparator(Separator.unicodeHorizontalSingle)
+            withVerticalSeparator(Separator.unicodeVerticalDouble)
+        }
 
         // Assert
         assertTable(table, 3, 3, "1║2║3", "─╫─╫─", "4║5║6", "─╫─╫─", "7║8║9")
@@ -152,10 +151,10 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testUnicodeSeparatorsDoubleSingle() {
         // Act
-        val table = create3x3Table()
-            .withHorizontalSeparator(Separator.unicodeHorizontalDouble)
-            .withVerticalSeparator(Separator.unicodeVerticalSingle)
-            .build()
+        val table = create3x3Table {
+            withHorizontalSeparator(Separator.unicodeHorizontalDouble)
+            withVerticalSeparator(Separator.unicodeVerticalSingle)
+        }
 
         // Assert
         assertTable(table, 3, 3, "1│2│3", "═╪═╪═", "4│5│6", "═╪═╪═", "7│8│9")
@@ -165,11 +164,11 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testSetCellsColoured() {
         // Act
-        val table = Table.Builder()
-            .setCell(0, 0, "a".red())
-            .setCell(1, 1, "b".green())
-            .setCell(2, 2, "c".blue())
-            .build()
+        val table = Table {
+            setCell(0, 0, "a".red())
+            setCell(1, 1, "b".green())
+            setCell(2, 2, "c".blue())
+        }
 
         // Assert
         assertTable(table, 3, 3, "a".red() + "  ", " " + "b".green() + " ", "  " + "c".blue())
@@ -178,12 +177,12 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testAppendRowColoured() {
         // Act
-        val table = Table.Builder()
-            .appendRow('a', 'b', 'c')
-            .appendRow('a', Tile('U', "D".red()))
-            .appendRow('a', "LR".green(), 'c', 'd')
-            .appendRow(null, 'b', null, "d".blueBackground())
-            .build()
+        val table = Table {
+            appendRow('a', 'b', 'c')
+            appendRow('a', Tile('U', "D".red()))
+            appendRow('a', "LR".green(), 'c', 'd')
+            appendRow(null, 'b', null, "d".blueBackground())
+        }
 
         // Assert
         assertTable(
@@ -201,10 +200,10 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testBothSeparatorsWithRulesColoured() {
         // Act
-        val table = create3x3Table()
-            .withHorizontalSeparator('h', Colors(Color.BLUE))
-            .withVerticalSeparator('v', Colors(Color.BLUE))
-            .build()
+        val table = create3x3Table {
+            withHorizontalSeparator('h', Colors(Color.BLUE))
+            withVerticalSeparator('v', Colors(Color.BLUE))
+        }
         val rules = listOf(IntersectionRuleImpl('X', 'h', 'h', 'v', 'v'))
 
         // Assert
@@ -225,9 +224,9 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testAsciiSeparatorsColoured() {
         // Act
-        val table = create3x3Table()
-            .withSeparatorsAscii(Colors(Color.GREEN))
-            .build()
+        val table = create3x3Table {
+            withSeparatorsAscii(Colors(Color.GREEN))
+        }
 
         // Assert
         val l = "|".green()
@@ -246,9 +245,9 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testUnicodeSeparatorsSingleColoured() {
         // Act
-        val table = create3x3Table()
-            .withSeparatorsUnicodeSingle(Colors(background = Color.CYAN))
-            .build()
+        val table = create3x3Table {
+            withSeparatorsUnicodeSingle(Colors(background = Color.CYAN))
+        }
 
         // Assert
         val l = "│".cyanBackground()
@@ -267,9 +266,9 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testUnicodeSeparatorsDoubleColoured() {
         // Act
-        val table = create3x3Table()
-            .withSeparatorsUnicodeDouble(Colors(Color.LIGHT_BLUE))
-            .build()
+        val table = create3x3Table {
+            withSeparatorsUnicodeDouble(Colors(Color.LIGHT_BLUE))
+        }
 
         // Assert
         val l = "║".lightBlue()
@@ -288,10 +287,10 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testUnicodeSeparatorsSingleDoubleColoured() {
         // Act
-        val table = create3x3Table()
-            .withHorizontalSeparator(Separator.unicodeHorizontalSingle, Colors(Color.BLUE))
-            .withVerticalSeparator(Separator.unicodeVerticalDouble, Colors(Color.BLUE))
-            .build()
+        val table = create3x3Table {
+            withHorizontalSeparator(Separator.unicodeHorizontalSingle, Colors(Color.BLUE))
+            withVerticalSeparator(Separator.unicodeVerticalDouble, Colors(Color.BLUE))
+        }
 
         // Assert
         val l = "║".blue()
@@ -310,10 +309,10 @@ class TestTable : DisplayElementTestBase() {
     @Test
     fun testUnicodeSeparatorsDoubleSingleColoured() {
         // Act
-        val table = create3x3Table()
-            .withHorizontalSeparator(Separator.unicodeHorizontalDouble, Colors(Color.YELLOW))
-            .withVerticalSeparator(Separator.unicodeVerticalSingle, Colors(Color.YELLOW))
-            .build()
+        val table = create3x3Table {
+            withHorizontalSeparator(Separator.unicodeHorizontalDouble, Colors(Color.YELLOW))
+            withVerticalSeparator(Separator.unicodeVerticalSingle, Colors(Color.YELLOW))
+        }
 
         // Assert
         val l = "│".yellow()
@@ -350,11 +349,11 @@ class TestTable : DisplayElementTestBase() {
         assertThat("Columns", table.columns, equalTo(columns))
         assertDisplay(table.render(intersectionRules), lines.asIterable())
     }
+}
 
-    private fun create3x3Table() =
-        Table.Builder()
-            .appendRow(1, 2, 3)
-            .appendRow(4, 5, 6)
-            .appendRow(7, 8, 9)
-
+internal fun create3x3Table(extra: Table.Builder.() -> Unit) = Table {
+    appendRow(1, 2, 3)
+    appendRow(4, 5, 6)
+    appendRow(7, 8, 9)
+    extra()
 }

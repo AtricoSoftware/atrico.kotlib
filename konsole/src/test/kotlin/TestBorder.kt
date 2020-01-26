@@ -12,8 +12,7 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testNoBorder() {
         // Act
-        val border = Border.Builder(content)
-            .build()
+        val border = Border(content)
 
         // Assert
         assertDisplay(border, contentLines)
@@ -22,9 +21,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testLeft() {
         // Act
-        val border = Border.Builder(content)
-            .withLeft('l')
-            .build()
+        val border = Border(content) {
+            withLeft('l')
+        }
 
         // Assert
         assertDisplay(border, contentLines.map { "l$it" })
@@ -33,9 +32,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testRight() {
         // Act
-        val border = Border.Builder(content)
-            .withRight('r')
-            .build()
+        val border = Border(content) {
+            withRight('r')
+        }
 
         // Assert
         assertDisplay(border, contentLines.map { "${it}r" })
@@ -44,9 +43,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testTop() {
         // Act
-        val border = Border.Builder(content)
-            .withTop('t')
-            .build()
+        val border = Border(content) {
+            withTop('t')
+        }
 
         // Assert
         assertDisplay(border, listOf("ttt") + contentLines)
@@ -55,9 +54,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testBottom() {
         // Act
-        val border = Border.Builder(content)
-            .withBottom('b')
-            .build()
+        val border = Border(content) {
+            withBottom('b')
+        }
 
         // Assert
         assertDisplay(border, contentLines + "bbb")
@@ -66,12 +65,12 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testAllNoRules() {
         // Act
-        val border = Border.Builder(content)
-            .withLeft('l')
-            .withRight('r')
-            .withTop('t')
-            .withBottom('b')
-            .build()
+        val border = Border(content) {
+            withLeft('l')
+            withRight('r')
+            withTop('t')
+            withBottom('b')
+        }
 
         // Assert
         assertDisplay(border.render(emptyList()), listOf("ttttt") + contentLines.map { "l${it}r" } + "bbbbb")
@@ -80,12 +79,12 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testAllWithRules() {
         // Act
-        val border = Border.Builder(content)
-            .withLeft('l')
-            .withRight('r')
-            .withTop('t')
-            .withBottom('b')
-            .build()
+        val border = Border(content) {
+            withLeft('l')
+            withRight('r')
+            withTop('t')
+            withBottom('b')
+        }
         val rules = listOf(
             IntersectionRuleImpl('A', right = 't', below = 'l'),
             IntersectionRuleImpl('B', left = 't', below = 'r'),
@@ -100,9 +99,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testSimpleAscii() {
         // Act
-        val border = Border.Builder(content)
-            .withAscii()
-            .build()
+        val border = Border(content) {
+            withAscii()
+        }
 
         // Assert
         assertDisplay(border, listOf("+---+") + contentLines.map { "|${it}|" } + "+---+")
@@ -111,9 +110,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testUnicodeSingle() {
         // Act
-        val border = Border.Builder(content)
-            .withUnicodeSingle()
-            .build()
+        val border = Border(content) {
+            withUnicodeSingle()
+        }
 
         // Assert
         assertDisplay(border, listOf("┌───┐") + contentLines.map { "│${it}│" } + "└───┘")
@@ -122,9 +121,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testUnicodeDouble() {
         // Act
-        val border = Border.Builder(content)
-            .withUnicodeDouble()
-            .build()
+        val border = Border(content) {
+            withUnicodeDouble()
+        }
 
         // Assert
         assertDisplay(border, listOf("╔═══╗") + contentLines.map { "║${it}║" } + "╚═══╝")
@@ -134,31 +133,31 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testLeftColoured() {
         // Act
-        val border = Border.Builder(content)
-            .withLeft('l', Colors(Color.RED))
-            .build()
+        val border = Border(content) {
+            withLeft('l', Colors(Color.RED))
+        }
 
         // Assert
-        assertDisplay(border, contentLines.map { "l".red() + "$it" })
+        assertDisplay(border, contentLines.map { "l".red() + it })
     }
 
     @Test
     fun testRightColoured() {
         // Act
-        val border = Border.Builder(content)
-            .withRight('r', Colors(Color.BLUE))
-            .build()
+        val border = Border(content) {
+            withRight('r', Colors(Color.BLUE))
+        }
 
         // Assert
-        assertDisplay(border, contentLines.map { "$it" + "r".blue() })
+        assertDisplay(border, contentLines.map { it + "r".blue() })
     }
 
     @Test
     fun testTopColoured() {
         // Act
-        val border = Border.Builder(content)
-            .withTop('t', Colors(background = Color.GREEN))
-            .build()
+        val border = Border(content) {
+            withTop('t', Colors(background = Color.GREEN))
+        }
 
         // Assert
         assertDisplay(border, listOf("ttt".greenBackground()) + contentLines)
@@ -167,9 +166,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testBottomColoured() {
         // Act
-        val border = Border.Builder(content)
-            .withBottom('b', Colors(Color.WHITE, Color.BLACK))
-            .build()
+        val border = Border(content) {
+            withBottom('b', Colors(Color.WHITE, Color.BLACK))
+        }
 
         // Assert
         assertDisplay(border, contentLines + Kolor.colors("bbb", Color.WHITE, Color.BLACK))
@@ -178,12 +177,12 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testAllWithRulesColoured() {
         // Act
-        val border = Border.Builder(content)
-            .withLeft('l', Colors(Color.BLUE))
-            .withRight('r', Colors(Color.BLUE))
-            .withTop('t', Colors(Color.BLUE))
-            .withBottom('b', Colors(Color.BLUE))
-            .build()
+        val border = Border(content) {
+            withLeft('l', Colors(Color.BLUE))
+            withRight('r', Colors(Color.BLUE))
+            withTop('t', Colors(Color.BLUE))
+            withBottom('b', Colors(Color.BLUE))
+        }
         val rules = listOf(
             IntersectionRuleImpl('A', right = 't', below = 'l'),
             IntersectionRuleImpl('B', left = 't', below = 'r'),
@@ -200,9 +199,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testSimpleAsciiColoured() {
         // Act
-        val border = Border.Builder(content)
-            .withAscii(Colors(Color.BLUE))
-            .build()
+        val border = Border(content) {
+            withAscii(Colors(Color.BLUE))
+        }
 
         // Assert
         assertDisplay(
@@ -213,9 +212,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testUnicodeSingleColoured() {
         // Act
-        val border = Border.Builder(content)
-            .withUnicodeSingle(Colors(Color.BLUE))
-            .build()
+        val border = Border(content) {
+            withUnicodeSingle(Colors(Color.BLUE))
+        }
 
         // Assert
         assertDisplay(
@@ -226,9 +225,9 @@ class TestBorder : DisplayElementTestBase() {
     @Test
     fun testUnicodeDoubleColoured() {
         // Act
-        val border = Border.Builder(content)
-            .withUnicodeDouble(Colors(Color.BLUE))
-            .build()
+        val border = Border(content) {
+            withUnicodeDouble(Colors(Color.BLUE))
+        }
 
         // Assert
         assertDisplay(

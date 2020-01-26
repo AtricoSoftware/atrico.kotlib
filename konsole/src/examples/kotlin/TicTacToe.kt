@@ -1,4 +1,3 @@
-import atrico.kotlib.konsole.DisplayElement
 import atrico.kotlib.konsole.IntersectionRule
 import atrico.kotlib.konsole.Pos
 import atrico.kotlib.konsole.Renderable
@@ -26,14 +25,14 @@ class TicTacToeExample(
         }.toMap()
     }
 
-    override fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement {
-        val grid = createTable(lines)
-        Pos.allPos(3, 3).forEach {
-            grid.setCell(it, cells[it] ?: ' ')
-        }
-        return grid.build().render(intersectionRules)
-    }
+    override fun render(intersectionRules: Iterable<IntersectionRule>) =
+        createTable(lines) {
+            Pos.allPos(3, 3).forEach {
+                setCell(it, cells[it] ?: ' ')
+            }
+        }.render(intersectionRules)
 }
+
 
 fun main() {
     val ticTacToe1 = TicTacToeExample(SeparatorType.SINGLE)

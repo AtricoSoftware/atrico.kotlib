@@ -6,7 +6,7 @@ import atrico.kotlib.konsole.colors.Colors
 /**
  * A border around a [Renderable] object
  * Object is [content] and the chars used for the border are specified in [left],[right], [top] and [bottom]
- * Intersections between the borders (corners) are controlled by the [intersectionRules]
+ * Intersections between the borders (corners) are controlled by the intersectionRules in the render function
  */
 class Border(
     private val content: Renderable,
@@ -18,9 +18,9 @@ class Border(
 
     override fun render(intersectionRules: Iterable<IntersectionRule>): DisplayElement {
         val contentRender = content.render(intersectionRules)
-        var contentOffset = Pos(if (left != null) 1 else 0, if (top != null) 1 else 0)
-        var width = contentRender.width + (left?.let { 1 } ?: 0) + (right?.let { 1 } ?: 0)
-        var height = contentRender.height + (top?.let { 1 } ?: 0) + (bottom?.let { 1 } ?: 0)
+        val contentOffset = Pos(if (left != null) 1 else 0, if (top != null) 1 else 0)
+        val width = contentRender.width + (left?.let { 1 } ?: 0) + (right?.let { 1 } ?: 0)
+        val height = contentRender.height + (top?.let { 1 } ?: 0) + (bottom?.let { 1 } ?: 0)
         val children = mutableListOf(content.withOffset(contentOffset))
         if (left != null) children.add(Separator.verticalSeparator(left, height).withOffset())
         if (right != null) children.add(Separator.verticalSeparator(right, height).withOffset(Pos.right(width - 1)))
@@ -33,7 +33,21 @@ class Border(
     /**
      * Builder for creation of a [Border]
      */
-    class Builder(private val content: Renderable) {
+    interface Builder {
+        fun withLeft(c: Char, color: Colors? = null)
+        fun withLeft(c: ColoredChar)
+        fun withRight(c: Char, color: Colors? = null)
+        fun withRight(c: ColoredChar)
+        fun withTop(c: Char, color: Colors? = null)
+        fun withTop(c: ColoredChar)
+        fun withBottom(c: Char, color: Colors? = null)
+        fun withBottom(c: ColoredChar)
+        fun withAscii(color: Colors? = null)
+        fun withUnicodeSingle(color: Colors? = null)
+        fun withUnicodeDouble(color: Colors? = null)
+    }
+
+    private class BuilderImpl(private val content: Renderable) : Builder {
         private var left: ColoredChar? = null
         private var right: ColoredChar? = null
         private var top: ColoredChar? = null
@@ -41,49 +55,54 @@ class Border(
 
         fun build(): Border = Border(content, left, right, top, bottom)
 
-        fun withLeft(c: Char, color: Colors? = null): Builder = withLeft(ColoredChar(c, color ?: Colors.none))
-        fun withLeft(c: ColoredChar): Builder {
+        override fun withLeft(c: Char, color: Colors?) = withLeft(ColoredChar(c, color ?: Colors.none))
+        override fun withLeft(c: ColoredChar) {
             left = c
-            return this
         }
 
-        fun withRight(c: Char, color: Colors? = null): Builder = withRight(ColoredChar(c, color ?: Colors.none))
-        fun withRight(c: ColoredChar): Builder {
+        override fun withRight(c: Char, color: Colors?) = withRight(ColoredChar(c, color ?: Colors.none))
+        override fun withRight(c: ColoredChar) {
             right = c
-            return this
         }
 
-        fun withTop(c: Char, color: Colors? = null): Builder = withTop(ColoredChar(c, color ?: Colors.none))
-        fun withTop(c: ColoredChar): Builder {
+        override fun withTop(c: Char, color: Colors?) = withTop(ColoredChar(c, color ?: Colors.none))
+        override fun withTop(c: ColoredChar) {
             top = c
-            return this
         }
 
-        fun withBottom(c: Char, color: Colors? = null): Builder = withBottom(ColoredChar(c, color ?: Colors.none))
-        fun withBottom(c: ColoredChar): Builder {
+        override fun withBottom(c: Char, color: Colors?) = withBottom(ColoredChar(c, color ?: Colors.none))
+        override fun withBottom(c: ColoredChar) {
             bottom = c
-            return this
         }
 
-        fun withAscii(color: Colors? = null): Builder {
-            return withLeft(Separator.asciiVertical, color)
-                .withRight(Separator.asciiVertical, color)
-                .withTop(Separator.asciiHorizontal, color)
-                .withBottom(Separator.asciiHorizontal, color)
+        override fun withAscii(color: Colors?) {
+            withLeft(Separator.asciiVertical, color)
+            withRight(Separator.asciiVertical, color)
+            withTop(Separator.asciiHorizontal, color)
+            withBottom(Separator.asciiHorizontal, color)
         }
 
-        fun withUnicodeSingle(color: Colors? = null): Builder {
-            return withLeft(Separator.unicodeVerticalSingle, color)
-                .withRight(Separator.unicodeVerticalSingle, color)
-                .withTop(Separator.unicodeHorizontalSingle, color)
-                .withBottom(Separator.unicodeHorizontalSingle, color)
+        override fun withUnicodeSingle(color: Colors?) {
+            withLeft(Separator.unicodeVerticalSingle, color)
+            withRight(Separator.unicodeVerticalSingle, color)
+            withTop(Separator.unicodeHorizontalSingle, color)
+            withBottom(Separator.unicodeHorizontalSingle, color)
         }
 
-        fun withUnicodeDouble(color: Colors? = null): Builder {
-            return withLeft(Separator.unicodeVerticalDouble, color)
-                .withRight(Separator.unicodeVerticalDouble, color)
-                .withTop(Separator.unicodeHorizontalDouble, color)
-                .withBottom(Separator.unicodeHorizontalDouble, color)
+        override fun withUnicodeDouble(color: Colors?) {
+            withLeft(Separator.unicodeVerticalDouble, color)
+            withRight(Separator.unicodeVerticalDouble, color)
+            withTop(Separator.unicodeHorizontalDouble, color)
+            withBottom(Separator.unicodeHorizontalDouble, color)
+        }
+    }
+
+    companion object {
+        operator fun invoke(content: Renderable) = invoke(content, {})
+        operator fun invoke(content: Renderable, config: Builder.() -> Unit): Border {
+            val builder = BuilderImpl(content)
+            builder.config()
+            return builder.build()
         }
     }
 }
