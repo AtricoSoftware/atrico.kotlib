@@ -11,7 +11,7 @@ class TestMatchers : TestBase() {
         DynamicTest.dynamicTest("isTrue($value) should equal $expected")
         {
             // Arrange
-            val matcher = isTrue()
+            val matcher = isTrue
 
             // Act
             val result = matcher.invoke(value).toString()
@@ -28,7 +28,7 @@ class TestMatchers : TestBase() {
         DynamicTest.dynamicTest("isFalse($value) should equal $expected")
         {
             // Arrange
-            val matcher = isFalse()
+            val matcher = isFalse
 
             // Act
             val result = matcher.invoke(value).toString()
@@ -37,6 +37,23 @@ class TestMatchers : TestBase() {
             // Assert
             val expectedStr = if (expected) "Match" else "Mismatch[\"was: $value\"]"
             assertThat(result, equalTo(expectedStr))
+        }
+    }
+
+    @TestFactory
+    fun testIsNotEqual() = equalsTestCases.map { (name, lhs, rhs, equal) ->
+        DynamicTest.dynamicTest("$name: $lhs should be ${if (equal) "" else "not "} equal to $rhs")
+        {
+            // Arrange
+            val matcher = notEqualTo(rhs)
+
+            // Act
+            val result = matcher.invoke(lhs).toString()
+            println(result)
+
+            // Assert
+            val expected = if (!equal) "Match" else "Mismatch"
+            assertThat(result.startsWith(expected), isTrue)
         }
     }
 
@@ -118,7 +135,19 @@ class TestMatchers : TestBase() {
         val containsInAnyOrderError: ErrorMessages?
     )
 
-    class ErrorMessages(val forward: String = "TODO", val backward: String = "TODO")
+    class ErrorMessages(val forward: String, val backward: String)
+
+    data class EqualsTestCase(val name: String, val lhs: Any?, val rhs: Any?, val equal: Boolean)
+
+    private val equalsTestCases = listOf(
+        EqualsTestCase("Equal", "text", "text", true),
+        EqualsTestCase("Equal", 123, 123, true),
+        EqualsTestCase("Equal (null)", null, null, true),
+        EqualsTestCase("Not Equal", "text", "text2", false),
+        EqualsTestCase("Not Equal", 123, 124, false),
+        EqualsTestCase("Not Equal (null)", 123, null, false),
+        EqualsTestCase("Not Equal (null)", null, 123, false)
+    )
 
     private val collectionTestCases = listOf(
         CollectionTestCase(

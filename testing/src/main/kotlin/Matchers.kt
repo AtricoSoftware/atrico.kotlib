@@ -8,12 +8,31 @@ import com.natpryce.hamkrest.equalTo
 /**
  * Returns a matcher that reports if a boolean value is true.
  */
-fun isTrue(): Matcher<Boolean?> = equalTo(true)
+val isTrue: Matcher<Boolean?> = equalTo(true)
 
 /**
  * Returns a matcher that reports if a boolean value is false.
  */
-fun isFalse(): Matcher<Boolean?> = equalTo(false)
+val isFalse: Matcher<Boolean?> = equalTo(false)
+
+/**
+ * Returns a matcher that matches not equal to
+ */
+fun <T> notEqualTo(expected: T?): Matcher<T?> = NotEqualToMatcher(expected)
+
+/**
+ * Matcher for not equal to
+ */
+private class NotEqualToMatcher<T>(private val expected: T?) : Matcher<T?> {
+    override fun invoke(actual: T?): MatchResult = if (actual != expected) {
+        MatchResult.Match
+    } else {
+        MatchResult.Mismatch("was: ${describe(actual)}")
+    }
+
+    override val description: String get() = "is not equal to ${describe(expected)}"
+    override val negatedDescription: String get() = "is equal to ${describe(expected)}"
+}
 
 /**
  * Returns a matcher for matching elements of a collection
@@ -32,9 +51,9 @@ fun <T> contains(elements: Iterable<T>): Matcher<Iterable<T>?> =
             if (actual == null) return Errors(isNull = true)
             // Full descriptive comparison
             val expectedRemain = elements.toMutableList()
-            errors.missing.forEach { expectedRemain.remove(it)}
+            errors.missing.forEach { expectedRemain.remove(it) }
             val actualRemain = actual.toMutableList()
-            errors.extra.forEach{actualRemain.remove(it)}
+            errors.extra.forEach { actualRemain.remove(it) }
             // Check for all in order
             if (equalTo(expectedRemain).invoke(actualRemain) == MatchResult.Match) return Errors()
             // Try removing elements
@@ -49,7 +68,7 @@ fun <T> contains(elements: Iterable<T>): Matcher<Iterable<T>?> =
         private fun matchWithRemovals(actual: List<T>, expected: List<T>, remove: Iterable<T>): Boolean {
             val actualRemain = actual.toMutableList()
             val expectedRemain = expected.toMutableList()
-            remove.forEach{
+            remove.forEach {
                 actualRemain.remove(it)
                 expectedRemain.remove(it)
             }
