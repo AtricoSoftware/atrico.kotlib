@@ -1,0 +1,4 @@
+combine remove obsoletes
+seal attribute
+Fix package (rename konsole to konsole-drawing?)
+move hash to utils/common
