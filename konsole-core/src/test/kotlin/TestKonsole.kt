@@ -1,14 +1,11 @@
-import atrico.kotlib.konsole.core.Attribute
-import atrico.kotlib.konsole.core.Color
-import atrico.kotlib.konsole.core.Konsole
+import atrico.kotlib.konsole.core.*
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 
 class TestKonsole : TestKonsoleBase() {
-
-    // region Create coloured string
 
     @TestFactory
     fun testColoredStringsForeground() = Color.values().map { color ->
@@ -18,12 +15,15 @@ class TestKonsole : TestKonsoleBase() {
 
             // Act
             val result = Konsole.foreground(text, color)
+            val resultExtension = text.foregroundColor(color)
             println(result)
+            println(resultExtension)
 
             // Assert
             val set = Attribute.Set.foregroundColor(color).ansiString
             val reset = Attribute.Reset.foregroundColor.ansiString
             assertThat("Foreground", result, equalTo("$set$text$reset"))
+            assertThat("Foreground extension", resultExtension, equalTo("$set$text$reset"))
         }
     }
 
@@ -35,12 +35,15 @@ class TestKonsole : TestKonsoleBase() {
 
             // Act
             val result = Konsole.background(text, color)
+            val resultExtension = text.backgroundColor(color)
             println(result)
+            println(resultExtension)
 
             // Assert
             val set = Attribute.Set.backgroundColor(color).ansiString
             val reset = Attribute.Reset.backgroundColor.ansiString
             assertThat("Background", result, equalTo("$set$text$reset"))
+            assertThat("Background extension", resultExtension, equalTo("$set$text$reset"))
         }
     }
 
@@ -52,15 +55,125 @@ class TestKonsole : TestKonsoleBase() {
 
             // Act
             val result = Konsole.color(text, color, color)
+            val resultExtension = text.colored(color, color)
             println(result)
+            println(resultExtension)
 
             // Assert
             val set = (Attribute.Set.foregroundColor(color) + Attribute.Set.backgroundColor(color)).ansiString
             val reset = (Attribute.Reset.foregroundColor + Attribute.Reset.backgroundColor).ansiString
             assertThat("Colors", result, equalTo("$set$text$reset"))
+            assertThat("Colors extension", resultExtension, equalTo("$set$text$reset"))
         }
     }
 
+    @Test
+    fun testBold() {
+        // Arrange
+        val text = randomString()
+
+        // Act
+        val result = Konsole.bold(text)
+        val resultExtension = text.bold()
+        println(result)
+        println(resultExtension)
+
+        // Assert
+        val set = (Attribute.Set.bold).ansiString
+        val reset = Attribute.Reset.bold.ansiString
+        assertThat("Bold", result, equalTo("$set$text$reset"))
+        assertThat("Bold extension", resultExtension, equalTo("$set$text$reset"))
+    }
+
+    @Test
+    fun testDim() {
+        // Arrange
+        val text = randomString()
+
+        // Act
+        val result = Konsole.dim(text)
+        val resultExtension = text.dim()
+        println(result)
+        println(resultExtension)
+
+        // Assert
+        val set = (Attribute.Set.dim).ansiString
+        val reset = Attribute.Reset.dim.ansiString
+        assertThat("Dim", result, equalTo("$set$text$reset"))
+        assertThat("Dim extension", resultExtension, equalTo("$set$text$reset"))
+    }
+
+    @Test
+    fun testUnderline() {
+        // Arrange
+        val text = randomString()
+
+        // Act
+        val result = Konsole.underline(text)
+        val resultExtension = text.underline()
+        println(result)
+        println(resultExtension)
+
+        // Assert
+        val set = (Attribute.Set.underline).ansiString
+        val reset = Attribute.Reset.underline.ansiString
+        assertThat("Underline", result, equalTo("$set$text$reset"))
+        assertThat("Underline extension", resultExtension, equalTo("$set$text$reset"))
+    }
+
+    @Test
+    fun testBlink() {
+        // Arrange
+        val text = randomString()
+
+        // Act
+        val result = Konsole.blink(text)
+        val resultExtension = text.blink()
+        println(result)
+        println(resultExtension)
+
+        // Assert
+        val set = (Attribute.Set.blink).ansiString
+        val reset = Attribute.Reset.blink.ansiString
+        assertThat("Blink", result, equalTo("$set$text$reset"))
+        assertThat("Blink extension", resultExtension, equalTo("$set$text$reset"))
+    }
+
+    @Test
+    fun testInvert() {
+        // Arrange
+        val text = randomString()
+
+        // Act
+        val result = Konsole.invert(text)
+        val resultExtension = text.invert()
+        println(result)
+        println(resultExtension)
+
+        // Assert
+        val set = (Attribute.Set.invert).ansiString
+        val reset = Attribute.Reset.invert.ansiString
+        assertThat("Invert", result, equalTo("$set$text$reset"))
+        assertThat("Invert extension", resultExtension, equalTo("$set$text$reset"))
+    }
+
+    @Test
+    fun testHidden() {
+        // Arrange
+        val text = randomString()
+
+        // Act
+        val result = Konsole.hide(text)
+        val resultExtension = text.hide()
+        println(result)
+        println(resultExtension)
+
+        // Assert
+        val set = (Attribute.Set.hidden).ansiString
+        val reset = Attribute.Reset.hidden.ansiString
+        assertThat("Hidden", result, equalTo("$set$text$reset"))
+        assertThat("Hidden extension", resultExtension, equalTo("$set$text$reset"))
+    }
 
     // region TODO
 /*
@@ -192,44 +305,6 @@ class TestKonsole : TestKonsoleBase() {
 
     // endregion Parse
 
-    @Test
-    fun testStripColorsNoColours() {
-        // Arrange
-        val text = randomString()
-
-        // Act
-        val result = Color.stripColors(text)
-        val resultExtension = text.stripColors()
-
-        // Assert
-        assertThat("Func", result, equalTo(text))
-        assertThat("Extension", resultExtension, equalTo(text))
-    }
-
-    @Test
-    fun testStripColors() {
-        // Arrange
-        val text = randomString()
-        val withForeground = Color.foreground(text, Color.RED)
-        val withBackground = Color.background(text, Color.BLUE)
-        val withBoth = Color.colored(text, Color.BLACK, Color.WHITE)
-
-        // Act
-        val resultForeground = Color.stripColors(withForeground)
-        val resultForegroundExtension = withForeground.stripColors()
-        val resultBackground = Color.stripColors(withBackground)
-        val resultBackgroundExtension = withBackground.stripColors()
-        val resultBoth = Color.stripColors(withBoth)
-        val resultBothExtension = withBoth.stripColors()
-
-        // Assert
-        assertThat("Foreground", resultForeground, equalTo(text))
-        assertThat("Foreground Extension", resultForegroundExtension, equalTo(text))
-        assertThat("Background", resultBackground, equalTo(text))
-        assertThat("Background Extension", resultBackgroundExtension, equalTo(text))
-        assertThat("Both", resultBoth, equalTo(text))
-        assertThat("Both Extension", resultBothExtension, equalTo(text))
-    }
 
     @Test
     fun testDisplayColors() {

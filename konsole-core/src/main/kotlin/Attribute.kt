@@ -9,6 +9,13 @@ class Attribute private constructor(private val types: Map<AttributeType, SetOrR
     }
 
     val ansiString: String by lazy { createString() }
+
+    /**
+     * Attribute which will reset all attributes set by this
+     * Reset attributes are ignored
+     */
+    val reset: Attribute by lazy{Attribute(types.entries.filter { it.value is SetOrReset.Set }.map{it.key to SetOrReset.Reset()}.toMap())}
+
     /**
      * Combine this attribute with [rhs]
      */
@@ -32,7 +39,8 @@ class Attribute private constructor(private val types: Map<AttributeType, SetOrR
             }
         })
 
-    private fun createString(values: Iterable<Int>) = if (values.any()) values.joinToString(";", "$ESCAPE[", "m") else ""
+    private fun createString(values: Iterable<Int>) =
+        if (values.any()) values.joinToString(";", "$ESCAPE[", "m") else ""
 
     // region Constructors
 
@@ -66,16 +74,32 @@ class Attribute private constructor(private val types: Map<AttributeType, SetOrR
     // endregion Constructors
 
     companion object {
-        val none by lazy{Attribute(emptyMap())}
+        val none by lazy { Attribute(emptyMap()) }
         /** Escape char */
         private val ESCAPE = '\u001B'
         /** Offset to foreground codes to produce background ansi strings */
         private const val BG_JUMP = 10
 
         /**
-         * Parse an ansi code into the color (or null if not value)
+         * Combine these [attributes] into a single attribute
+         */
+        fun combine(attributes: Iterable<Attribute>) = attributes.fold(none) { acc, attr -> acc + attr }
+
+        /**
+         * Combine these [attributes] into a single attribute (vararg)
+         */
+        fun combine(vararg attributes: Attribute) = combine(attributes.asIterable())
+
+        /**
+         * Parse an ansi code into the attribute (or null if not value)
          */
         fun parse(text: String): Attribute? = parseRegexMatch(ansiRegex.matchEntire(text))
+
+        /**
+         * Strip the ansi codes from a string
+         * @return Simple string with no codes
+         */
+        fun stripAttributes(text: String): String = ansiRegex.split(text).joinToString("")
 
         /** Regex for parsing ANSI control strings */
         private val ansiRegex = Regex("${ESCAPE}\\[(\\d+(;\\d+)*)m")
@@ -84,7 +108,7 @@ class Attribute private constructor(private val types: Map<AttributeType, SetOrR
          * Check a match result (on [ansiRegex]) and return color code or null
          */
         private fun parseRegexMatch(match: MatchResult?): Attribute? =
-            match?.groups?.get(1)?.value?.split(';')?.mapNotNull { fromValue(it.toInt()) }?.fold(none){ acc, attr->acc+attr}
+            match?.groups?.get(1)?.value?.split(';')?.mapNotNull { fromValue(it.toInt()) }?.fold(none) { acc, attr -> acc + attr }
 
         /**
          * Create attribute from its baseCode
@@ -113,7 +137,7 @@ class Attribute private constructor(private val types: Map<AttributeType, SetOrR
             }
     }
 
-    sealed class SetOrReset(val color: Color?) {
+    private sealed class SetOrReset(val color: Color?) {
         abstract fun display(type: AttributeType): String
         class Set(color: Color? = null) : SetOrReset(color) {
             override fun display(type: AttributeType) = "Set.$type${color?.let { "($color)" } ?: ""}"
@@ -124,7 +148,7 @@ class Attribute private constructor(private val types: Map<AttributeType, SetOrR
         }
     }
 
-    enum class AttributeType {
+    private enum class AttributeType {
         BOLD,
         DIM,
         UNDERLINE,

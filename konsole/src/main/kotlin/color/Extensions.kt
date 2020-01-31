@@ -17,7 +17,6 @@ fun String.parseColoredText() = Color.parseText(this)
 
 /** Extension functions to set foreground colour of string */
 fun String.black() = Color.foreground(this, Color.BLACK)
-
 fun String.red() = Color.foreground(this, Color.RED)
 fun String.green() = Color.foreground(this, Color.GREEN)
 fun String.yellow() = Color.foreground(this, Color.YELLOW)
@@ -34,8 +33,8 @@ fun String.lightCyan() = Color.foreground(this, Color.LIGHT_CYAN)
 fun String.white() = Color.foreground(this, Color.WHITE)
 
 /** Extension functions to set foreground colour of string */
+fun String.background(color:Color) = Color.background(this, color)
 fun String.blackBackground() = Color.background(this, Color.BLACK)
-
 fun String.redBackground() = Color.background(this, Color.RED)
 fun String.greenBackground() = Color.background(this, Color.GREEN)
 fun String.yellowBackground() = Color.background(this, Color.YELLOW)

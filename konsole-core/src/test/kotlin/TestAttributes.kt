@@ -1,5 +1,7 @@
 import atrico.kotlib.konsole.core.Attribute
 import atrico.kotlib.konsole.core.Color
+import atrico.kotlib.konsole.core.Konsole
+import atrico.kotlib.konsole.core.stripAttributes
 import atrico.kotlib.testing.containsInAnyOrder
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
@@ -22,7 +24,6 @@ class TestAttributes : TestKonsoleBase() {
         assertThat("ansi", ansi, equalTo(""))
         assertThat("toString", toString, equalTo(""))
     }
-
 
     @TestFactory
     fun testAnsiStrings() = ansiCodes.map { (attribute, ansi) ->
@@ -61,7 +62,22 @@ class TestAttributes : TestKonsoleBase() {
         }
     }
 
-     @Test
+    @TestFactory
+    fun testCombine() = combinationAnsiCodes.map { (name, attributes, _) ->
+        DynamicTest.dynamicTest("$name: Combined attributes ${attributes.joinToString(",")}") {
+            println(attributes.joinToString(","))
+            // Arrange
+            val expected = attributes.fold(Attribute.none) { acc, attr -> acc + attr }
+            // Act
+            val result = Attribute.combine(attributes)
+            println(result)
+
+            // Assert
+            assertThat("result", result, equalTo(expected))
+        }
+    }
+
+    @Test
     fun testParseInvalid() {
         // Arrange
         val text = randomString()
@@ -84,6 +100,69 @@ class TestAttributes : TestKonsoleBase() {
         assertThat("$msg: Suffix", actualSuffix, equalTo(expectedSuffix))
         assertThat("$msg: Values", actualValues, containsInAnyOrder(expectedValues))
     }
+
+    @Test
+    fun testStripAttributesNoAttributes() {
+        // Arrange
+        val text = randomString()
+
+        // Act
+        val result = Attribute.stripAttributes(text)
+        val resultExtension = text.stripAttributes()
+
+        // Assert
+        assertThat("Func", result, equalTo(text))
+        assertThat("Extension", resultExtension, equalTo(text))
+    }
+
+    @Test
+    fun testStripColors() {
+        // Arrange
+        val text = randomString()
+        val withForeground = Konsole.foreground(text, Color.RED)
+        val withBackground = Konsole.background(text, Color.BLUE)
+        val withBoth = Konsole.color(text, Color.BLACK, Color.WHITE)
+
+        // Act
+        val resultForeground = Attribute.stripAttributes(withForeground)
+        val resultForegroundExtension = withForeground.stripAttributes()
+        val resultBackground = Attribute.stripAttributes(withBackground)
+        val resultBackgroundExtension = withBackground.stripAttributes()
+        val resultBoth = Attribute.stripAttributes(withBoth)
+        val resultBothExtension = withBoth.stripAttributes()
+
+        // Assert
+        assertThat("Foreground", resultForeground, equalTo(text))
+        assertThat("Foreground Extension", resultForegroundExtension, equalTo(text))
+        assertThat("Background", resultBackground, equalTo(text))
+        assertThat("Background Extension", resultBackgroundExtension, equalTo(text))
+        assertThat("Both", resultBoth, equalTo(text))
+        assertThat("Both Extension", resultBothExtension, equalTo(text))
+    }
+
+    @TestFactory
+    fun testStripCombined() = combinationAnsiCodes
+        .map { (name, attributes, _) -> Pair(name, attributes.fold(Attribute.none) { acc, attr -> acc + attr }) }
+        .map { (name, attribute) ->
+            DynamicTest.dynamicTest("$name: Strip attribute $attribute") {
+                println(attribute)
+                // Arrange
+                val text = randomString()
+                var withAttributes = Konsole.withAttributes(text, attribute)
+
+                // Act
+                val result = Attribute.stripAttributes(withAttributes)
+                val resultExtension = withAttributes.stripAttributes()
+                println(result)
+                println(resultExtension)
+
+                // Assert
+                assertThat("result", result, equalTo(text))
+                assertThat("result extension", resultExtension, equalTo(text))
+            }
+        }
+
+    // region Test cases
 
     // All attributes
     private val allAttributes = sequence {
@@ -337,5 +416,7 @@ class TestAttributes : TestKonsoleBase() {
             }
         }
     }.asIterable()
+    // endregion Test cases
+
 }
 
